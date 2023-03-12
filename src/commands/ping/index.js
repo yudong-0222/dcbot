@@ -9,5 +9,5 @@ export const action = async (interaction) =>{
   const appStore = useAppStore()
   const client = appStore.client;
   const sent = await interaction.reply({ content: '正在取得延遲🤔...', fetchReply: true });
-  interaction.editReply(`延遲: **${sent.createdTimestamp - interaction.createdTimestamp} ms**`);
+  interaction.editReply(`<:Concerned:1084371918955753552> - 延遲: **${sent.createdTimestamp - interaction.createdTimestamp} ms**`);
 }

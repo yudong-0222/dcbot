@@ -58,10 +58,10 @@ export const action = async (interaction) =>{
     const Help = new EmbedBuilder()
     .setColor("#939787")
     .setTitle(`${client.user.username}`)
-    .setDescription("歡迎使用，你可以查看下面的所有指令 🥵")
+    .setDescription("歡迎使用，你可以查看下面的所有指令 <:Snows:1084361500136845372>")
     .addFields(
       { name: '使用下面的選單選出您想要尋求幫助的指令吧', value: ' ' },
-      { name: '`/` 斜線指令已啟用✅', value: '使用 / 作為前綴來使用指令', inline: true },
+      { name: '`/` 斜線指令已啟用 <a:pickcheckmark:1084383521155592212>', value: '使用 / 作為前綴來使用指令', inline: true },
     )
     .setTimestamp()
     .setFooter({ text: '@2023 KOSHKA-LENGEND', iconURL: 'https://i.imgur.com/clEn73Q.gif' });

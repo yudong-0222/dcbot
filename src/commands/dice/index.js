@@ -1,5 +1,5 @@
 import {SlashCommandBuilder, EmbedBuilder, TextChannel} from 'discord.js'
-import {useAppStore} from '@/store/app'
+import {useAppStore} from '../../store/app'
 
 export const command = new SlashCommandBuilder()
 .setName('骰子遊戲')

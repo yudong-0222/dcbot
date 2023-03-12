@@ -1,5 +1,5 @@
 import {SlashCommandBuilder, EmbedBuilder} from 'discord.js'
-import {useAppStore} from '@/store/app'
+import {useAppStore} from '../../store/app'
 
 const appStore = useAppStore()
 export const command = new SlashCommandBuilder()

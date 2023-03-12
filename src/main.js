@@ -1,8 +1,8 @@
 import { Client, Events, GatewayIntentBits, EmbedBuilder } from 'discord.js'
 import dotenv from 'dotenv'
-import vueInit from '@/core/vue'
-import {loadCommands,loadEvents} from '@/core/loader'
-import { useAppStore } from '@/store/app'
+import vueInit from '../src/core/vue'
+import {loadCommands,loadEvents} from '../src//core/loader'
+import { useAppStore } from './store/app'
 
 
 vueInit()

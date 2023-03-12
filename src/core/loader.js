@@ -1,6 +1,6 @@
 import {REST,Routes,Collection} from 'discord.js'
 import fg from 'fast-glob'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '../store/app'
 
 
 

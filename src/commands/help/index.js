@@ -1,5 +1,5 @@
 import {SlashCommandBuilder,EmbedBuilder,ActionRowBuilder, StringSelectMenuBuilder, Events} from 'discord.js'
-import {useAppStore} from '@/store/app'
+import {useAppStore} from '../../store/app'
 
 
 const appStore = useAppStore();

@@ -1,5 +1,5 @@
 import {SlashCommandBuilder,Client,EmbedBuilder,ActionRowBuilder,ButtonBuilder,ButtonStyle} from 'discord.js'
-import {useAppStore} from '@/store/app'
+import {useAppStore} from '../../store/app'
 import ecoSchema from '../../Schemas/ecoSchema'
 
 export const command = new SlashCommandBuilder()

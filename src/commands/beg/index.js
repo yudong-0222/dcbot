@@ -2,19 +2,32 @@ import {SlashCommandBuilder,Client,EmbedBuilder,ActionRowBuilder,ButtonBuilder,B
 import {useAppStore} from '../../store/app'
 import ecoSchema from '../../Schemas/ecoSchema'
 
+var timeout = [];
+
+const embedss = new EmbedBuilder()
+	.setColor('Red')
+	.setTitle('<a:wrong:1085174299628929034>丨請稍等一下!')
+	.setDescription('你執行指令的速度太快了!')
+	.setTimestamp()
+
+
+
 export const command = new SlashCommandBuilder()
 .setName('社會實驗')
-.setDescription('經濟系統-賺點數')
+.setDescription('經濟系統-賺點數-(<:latestddd:1084369447340486787>注意!你有極大的機率輸錢!)')
 
 export const action = async (interaction) =>{
+  if (timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [embedss], ephemeral: true})
+
   const appStore = useAppStore()
   const client = appStore.client;
+  
   
   const {user, guild} = interaction;
 
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
 
-  let negative = Math.round((Math.random()* -300)-10)
+  let negative = Math.round((Math.random()* -300)-100)
   let positive = Math.round((Math.random()*300)+10)
 
   const posN = [negative, positive];
@@ -69,10 +82,12 @@ export const action = async (interaction) =>{
     .setTitle('社會實驗')
     .addFields({name: "實驗結果", value:`${negativeChoices[[negName]]} $${nonSymbol}`})
 
-
     await interaction.reply({embeds: [embed2]});
   }
   
-
+  timeout.push(interaction.user.id);
+  setTimeout(()=> {
+    timeout.shift();
+  },5000)
 
 }

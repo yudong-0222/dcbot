@@ -26,4 +26,5 @@ export const action = async (interaction) =>{
   .addFields({name: "所剩信用點數餘額", value: `**銀行:** $${bank}\n**錢包:** $${wallet}\n**加總:** $${total}`})
 
   await interaction.reply({embeds: [embed]});
+  
 }

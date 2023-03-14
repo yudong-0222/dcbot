@@ -1,11 +1,23 @@
-import {SlashCommandBuilder, EmbedBuilder, TextChannel} from 'discord.js'
+import {SlashCommandBuilder, EmbedBuilder} from 'discord.js'
 import {useAppStore} from '../../store/app'
+
+var timeout = [];
+
+
+// inside a command, event listener, etc.
+const embedss = new EmbedBuilder()
+	.setColor('Red')
+	.setTitle('<a:wrong:1085174299628929034>丨請稍等一下!')
+	.setDescription('你執行指令的速度太快了!')
+	.setTimestamp()
+
 
 export const command = new SlashCommandBuilder()
 .setName('骰子遊戲')
 .setDescription('🎲 骰子遊戲: 與機器人比大小')
 
 export const action = async (interaction) =>{
+  if (timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [embedss], ephemeral: true})
   const appStore = useAppStore()
   const client = appStore.client;
   const num = Math.floor(Math.random() * (6-1)) +1;
@@ -22,7 +34,7 @@ export const action = async (interaction) =>{
     const embed = new EmbedBuilder()
       .setTitle(`比對中...`)
       .setDescription(`雙方骰子皆已發放.結果即將出爐!`)
-      .setColor(0x18e1ee)    
+      .setColor('Random')    
     
       await interaction.reply({embeds: [embed]})
       
@@ -32,5 +44,9 @@ export const action = async (interaction) =>{
       .setDescription(end)
     
     interaction.editReply({embeds: [DiceE]})
-
+    
+    timeout.push(interaction.user.id);
+    setTimeout(() => {
+      timeout.shift();
+    },10000)
 } 

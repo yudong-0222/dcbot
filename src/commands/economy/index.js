@@ -23,7 +23,7 @@ export const action = async (interaction) =>{
 
   const embed2 = new EmbedBuilder()
   .setColor('#333555')
-  .setTitle('<a:verify2:108514760163826896> 帳戶創建完畢!')
+  .setTitle('<a:verify2:1085147601638268968> 帳戶創建完畢!')
   .setDescription('帳戶已經創建完畢。\n使用 `/點數餘額`查看當前的餘額')
   .addFields({name: '成功!', value: `帳號已經創建完畢!`})
   .setFooter({text: `來自 ${interaction.user.username}`})
@@ -31,7 +31,7 @@ export const action = async (interaction) =>{
 
   const embed3 = new EmbedBuilder()
   .setColor('#333555')
-  .setTitle('<a:verify2:108514760163826896> 帳戶已經刪除完畢')
+  .setTitle('<a:verify2:1085147601638268968> 帳戶已經刪除完畢')
   .setDescription('使用 `/創建帳戶`重新建立?')
   .addFields({name: '成功', value: `你的帳號已經成功刪除`})
 
@@ -51,14 +51,20 @@ export const action = async (interaction) =>{
   )
 
   const message = await interaction.reply({ embeds: [embed], components: [button]})
-  let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
   const collector = await message.createMessageComponentCollector();
+  let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
+  const total = Math.round(Data.Wallet + Data.Bank);
+
 
   collector.on(`collect`, async i =>{
     if (i.customId === 'page1') {
       if(i.user.id != interaction.user.id) {
         return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
       }
+      if(total < 0) {
+        return i.reply({content: `<a:wrong:1085174299628929034>丨您目前處於欠債狀態，無法重新建立帳戶\n你必須把債還清才有權限做到這個!`, ephemeral: true})
+      } 
+      if(Data) {return i.reply({content: `<a:wrong:1085174299628929034>丨你目前已擁有帳戶!\n沒有必要重新創建!`, ephemeral: true})}
 
       Data = new ecoSchema({
         Guild: interaction.guild.id,
@@ -76,6 +82,7 @@ export const action = async (interaction) =>{
         return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
       }
       if(!Data) return;
+      if(total < 0) return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此指令，因為您仍然負債。\n把債還完才有權限刪除帳戶!`, ephemeral: true});
       await Data.deleteOne();
       await i.update({embeds: [embed3], components: []})
     }

@@ -8,6 +8,6 @@ export const command = new SlashCommandBuilder()
 export const action = async (interaction) =>{
   const appStore = useAppStore()
   const client = appStore.client;
-  const sent = await interaction.reply({ content: '正在取得延遲🤔...', fetchReply: true });
-  interaction.editReply(`<:Concerned:1084371918955753552> - 延遲: **${sent.createdTimestamp - interaction.createdTimestamp} ms**`);
+  const sent = await interaction.reply({ content: '<a:load:1084371236836081674> 正在取得延遲...', fetchReply: true });
+  interaction.editReply(`<:niceping:1085146221338959943> - 延遲: **${sent.createdTimestamp - interaction.createdTimestamp} ms**`);
 }

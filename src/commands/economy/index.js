@@ -53,38 +53,36 @@ export const action = async (interaction) =>{
   const message = await interaction.reply({ embeds: [embed], components: [button]})
   const collector = await message.createMessageComponentCollector();
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
-  const total = Math.round(Data.Wallet + Data.Bank);
-
 
   collector.on(`collect`, async i =>{
     if (i.customId === 'page1') {
       if(i.user.id != interaction.user.id) {
         return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
       }
-      if(total < 0) {
-        return i.reply({content: `<a:wrong:1085174299628929034>丨您目前處於欠債狀態，無法重新建立帳戶\n你必須把債還清才有權限做到這個!`, ephemeral: true})
-      } 
-      if(Data) {return i.reply({content: `<a:wrong:1085174299628929034>丨你目前已擁有帳戶!\n沒有必要重新創建!`, ephemeral: true})}
-
+      // if(total < 0) {
+      //   return i.reply({content: `<a:wrong:1085174299628929034>丨您目前處於欠債狀態，無法重新建立帳戶\n你必須把債還清才有權限做到這個!`, ephemeral: true})
+      // } 
       Data = new ecoSchema({
         Guild: interaction.guild.id,
         User: user.id,
         Bank: 0,
-        Wallet: 0
+        Wallet: 10
       })
 
       await Data.save();
-      await i.update({embeds: [embed2], components: []})
+      await i.update({embeds: [embed2], components: [] })
     }
-
     if (i.customId === 'page2') {
+      ;
       if(i.user.id != interaction.user.id) {
         return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
       }
-      if(!Data) return;
-      if(total < 0) return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此指令，因為您仍然負債。\n把債還完才有權限刪除帳戶!`, ephemeral: true});
+      // if(total < 0) return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此指令，因為您仍然負債。\n把債還完才有權限刪除帳戶!`, ephemeral: true});
+      
+      if(!Data) return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此操作\n因為你沒有帳戶`, ephemeral: true});
+      
       await Data.deleteOne();
-      await i.update({embeds: [embed3], components: []})
+      await i.update({embeds: [embed3], components: [] })
     }
   })
 }

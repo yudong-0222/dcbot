@@ -14,7 +14,7 @@ const embedss = new EmbedBuilder()
 
 export const command = new SlashCommandBuilder()
 .setName('社會實驗')
-.setDescription('經濟系統-賺點數-(注意!你有極大的機率輸錢!)')
+.setDescription('經濟系統-社會實驗-(你有極大的機率輸錢😈)')
 
 export const action = async (interaction) =>{
   if (timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [embedss], ephemeral: true})
@@ -27,7 +27,7 @@ export const action = async (interaction) =>{
 
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
 
-  let negative = Math.round((Math.random()* -300)-100)
+  let negative = Math.round((Math.random()* -300)-1000)
   let positive = Math.round((Math.random()*300)+10)
 
   const posN = [negative, positive];
@@ -65,11 +65,16 @@ export const action = async (interaction) =>{
     const negativeChoices = [
       "天上掉下來一捆錢，你收起來但被扣除了",
       "睡醒之後又睡著，你的點數被鬧鐘扣除了",
-      "樂透頭獎是你的!但政府收稅收了",
+      "樂透頭獎是你的!但政府稅收收走了",
       "你努力為黨付出，但你只是韭菜，什麼都沒有，點數被扣除",
       "當你努力準備了半年，結果輸給1.35分，點數被奪走",
       "飛機生小孩了，是個小男孩，點數被燒毀",
-      "做了三小時的報告，然後沒有保存，你很優秀，被偷走點數"
+      "做了三小時的報告，然後沒有保存，你很優秀，被偷走點數",
+      "你使用 `裸考`，你獲得了0分，因此被上古卷軸收走點數",
+      "你跟世界之眼對到眼，但你根本不知道這是什麼，所以點數被收走",
+      "UNKNOWN MAGIC MAKE YOUR CREDITS LOST! YOU HAVE BEEN LOST",
+      "Discord 發現你有異狀行為，所以收走了你的點數共",
+      "在同學大便的時候大喊:**多吃菜喔**,因此被清算，點數被沖走"
     ]
 
     const negName = Math.round((Math.random() * negativeChoices.length));

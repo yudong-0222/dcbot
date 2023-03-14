@@ -19,11 +19,11 @@ export const action = async (interaction) =>{
   .setTitle('社會信用點數帳號')
   .setDescription('選項如下，點擊按鈕來確認')
   .addFields({name: '創建帳戶', value: `創建一個帳戶 \n(已創建則不會再另外創建一個)`})
-  .addFields({name: '刪除帳戶', value: `刪除現有的帳戶 \n(⛔**請注意:所有金額都會消失**)`})
+  .addFields({name: '刪除帳戶', value: `刪除現有的帳戶 \n(<:warn:1085138987636752414>**請注意:所有金額都會消失**)`})
 
   const embed2 = new EmbedBuilder()
   .setColor('#333555')
-  .setTitle('<:xx:1074627080542765116> 帳戶創建完畢!')
+  .setTitle('<a:verify2:108514760163826896> 帳戶創建完畢!')
   .setDescription('帳戶已經創建完畢。\n使用 `/點數餘額`查看當前的餘額')
   .addFields({name: '成功!', value: `帳號已經創建完畢!`})
   .setFooter({text: `來自 ${interaction.user.username}`})
@@ -31,7 +31,7 @@ export const action = async (interaction) =>{
 
   const embed3 = new EmbedBuilder()
   .setColor('#333555')
-  .setTitle('<:X_:1076798408494436403> 帳戶已經刪除完畢')
+  .setTitle('<a:verify2:108514760163826896> 帳戶已經刪除完畢')
   .setDescription('使用 `/創建帳戶`重新建立?')
   .addFields({name: '成功', value: `你的帳號已經成功刪除`})
 
@@ -39,13 +39,13 @@ export const action = async (interaction) =>{
   .addComponents(
     new ButtonBuilder()
     .setCustomId('page1')
-    .setEmoji(`✅`)
+    .setEmoji(`<:success:1085139200992624710>`)
     .setLabel('創建帳戶')
     .setStyle(ButtonStyle.Success),
 
     new ButtonBuilder()
     .setCustomId('page2')
-    .setEmoji(`⚠`)
+    .setEmoji(`<:warn:1085138987636752414>`)
     .setLabel(`刪除帳戶`)
     .setStyle(ButtonStyle.Danger)
   )

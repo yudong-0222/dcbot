@@ -59,6 +59,7 @@ export const action = async (interaction) =>{
       if(i.user.id != interaction.user.id) {
         return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
       }
+      if(Data) return i.reply({content: `<a:wrong:1085174299628929034>丨你已經擁有帳戶了`, ephemeral: true});
       // if(total < 0) {
       //   return i.reply({content: `<a:wrong:1085174299628929034>丨您目前處於欠債狀態，無法重新建立帳戶\n你必須把債還清才有權限做到這個!`, ephemeral: true})
       // } 

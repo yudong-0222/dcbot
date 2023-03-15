@@ -1,6 +1,5 @@
-import {Events} from "discord.js"
+import {Events, ActivityType} from "discord.js"
 import mongoose from 'mongoose'
-
 
 
 const mongoDBURL = process.env.MONGODBURL
@@ -10,6 +9,8 @@ export const event = {
 }
 
 export const action = async(c) => {
+  c.user.setStatus('idle');
+  c.user.setActivity(' 經典爆破 (排位模式)', {type: ActivityType.Playing});
   console.log(`已登入 ${c.user.tag}`);
   if(!mongoDBURL) return;
   

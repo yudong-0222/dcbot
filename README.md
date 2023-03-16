@@ -8,7 +8,8 @@
 2. 新增等級
 3. Rebuild /Help
 4. Add aliases
-5. ...
+5. Add DM direct FALSE
+6. /../
 
 本機器人有一些是私人指令
 但沒人在乎 xD

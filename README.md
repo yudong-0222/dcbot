@@ -1,5 +1,7 @@
 # KOSHKA - LEGEND
 一個多功能的Discord Bot
+專屬於 LGD戰隊 的多功能中文Discord bot
+
 ## 版本: VER 0.0.3
 ## 目前計畫
 1. 新增銀行

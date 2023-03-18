@@ -28,7 +28,7 @@ export const action = async (interaction) =>{
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
 
   let negative = Math.round((Math.random()* -300)-1000)
-  let positive = Math.round((Math.random()*300)+10)
+  let positive = Math.round((Math.random()*799)+10)
 
   const posN = [negative, positive];
   const amount = Math.round((Math.random() * posN.length ))
@@ -74,7 +74,9 @@ export const action = async (interaction) =>{
       "你跟世界之眼對到眼，但你根本不知道這是什麼，所以點數被收走",
       "UNKNOWN MAGIC MAKE YOUR CREDITS LOST! YOU HAVE BEEN LOST",
       "Discord 發現你有異狀行為，所以收走了你的點數共",
-      "在同學大便的時候大喊:**多吃菜喔**,因此被清算，點數被沖走"
+      "在同學大便的時候大喊:**多吃菜喔**,因此被清算，點數被沖走",
+      "一切都往好的方向發展。但你被扣除",
+      "指令魔杖發現你有極大的才華，所以你的點數被魔杖吃掉了"
     ]
 
     const negName = Math.round((Math.random() * negativeChoices.length));

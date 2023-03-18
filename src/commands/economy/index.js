@@ -67,7 +67,7 @@ export const action = async (interaction) =>{
         Guild: interaction.guild.id,
         User: user.id,
         Bank: 0,
-        Wallet: 10
+        Wallet: 1000
       })
 
       await Data.save();

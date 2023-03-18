@@ -8,7 +8,7 @@ export const command = new SlashCommandBuilder()
 export const action = async (interaction) =>{
   const appStore = useAppStore()
   const client = appStore.client;
-  const Ver = "`V0.31`";
+  const Ver = "`V0.35`";
     const rank = "`專家II`";
     const author = `<@${interaction.guild.ownerId}>`;
 

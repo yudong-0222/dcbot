@@ -63,11 +63,13 @@ export const action = async (interaction) =>{
       // if(total < 0) {
       //   return i.reply({content: `<a:wrong:1085174299628929034>丨您目前處於欠債狀態，無法重新建立帳戶\n你必須把債還清才有權限做到這個!`, ephemeral: true})
       // } 
+      const oneDayMs = 24 * 60 * 60 * 1000
       Data = new ecoSchema({
         Guild: interaction.guild.id,
         User: user.id,
         Bank: 0,
-        Wallet: 1000
+        Wallet: 1000,
+        lastDaily: new Date(Date.now() - oneDayMs),
       })
 
       await Data.save();

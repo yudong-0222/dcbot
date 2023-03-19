@@ -27,7 +27,7 @@ export const action = async (interaction) =>{
   if(!Data) {
      total = "他沒有帳戶";
   } else {
-    total = Data.Wallet + Data.Bank;
+    total = Math.round(Data.Wallet + Data.Bank);
   }
 
 

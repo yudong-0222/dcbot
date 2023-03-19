@@ -59,7 +59,7 @@ export const action = async (interaction) =>{
     const begEmbed = new EmbedBuilder()
     .setColor('Green')
     .setTitle('<a:bunbun:991105824170713088> 搶劫成功!')
-    .addFields({name: `你進行了**搶劫**`,value: `${positiveChoices[[posName]]} ${value}`});
+    .addFields({name: `你**搶劫了** ${userStealing.tag}`,value: `${positiveChoices[[posName]]} ${value}`});
 
     await interaction.reply({embeds: [begEmbed]})
 
@@ -81,14 +81,14 @@ export const action = async (interaction) =>{
       const beblostEmbed = new EmbedBuilder()
     .setColor('Red')
     .setTitle('<a:policeWa:1086585371451740230> 搶劫失敗! <a:bunbun:991105824170713088> ')
-    .addFields({name: `你進行了**搶劫**`,value: `> 但你最終失敗了!`});
+    .addFields({name: `你**搶劫了** ${userStealing.tag}`,value: `> 但你最終失敗了!`});
 
     }
     
     const beblostEmbed = new EmbedBuilder()
     .setColor('Red')
     .setTitle('<a:wrong:1085174299628929034> 搶劫失敗! <a:bunbun:991105824170713088> ')
-    .addFields({name: `你進行了**搶劫**`,value: `> 但你失敗了!`});
+    .addFields({name: `你**搶劫了** ${userStealing.tag}`,value: `> 但你失敗了!`});
 
     await interaction.reply({embeds: [beblostEmbed]})
   }

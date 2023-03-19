@@ -38,14 +38,14 @@ export const action = async (interaction) =>{
     if(amount.startsWith('-')) return await interaction.reply({name: `<a:wrong:1085174299628929034>丨`+"`"+`不能輸入負數!`+"`",ephemeral: true})
     if(amount > Data.Wallet && amount > Data.Bank) return await interaction.reply({embeds: [noMoney], ephemeral: true})
     if(amount.toLowerCase() === 'all' || amount.toLowerCase() === "全部")  {
-      if(Data.Wallet === 0) return await interaction.reply({embeds: [noMoney], ephemeral: true});
+      if(Data.Wallet <= 0) return await interaction.reply({embeds: [noMoney], ephemeral: true});
       amount = Data.Wallet;
     } else {
       const wrong = new EmbedBuilder()
       .setColor('Red')
       .setTitle('<a:wrong:1085174299628929034>丨僅能輸入 `數字` 或者 `all`!')
       .setTimestamp()
-      return await interaction.editReply({embeds: [wrong], ephemeral: true})
+      return await interaction.reply({embeds: [wrong], ephemeral: true})
     }
     const appStore = useAppStore()
     const client = appStore.client;
@@ -59,8 +59,13 @@ export const action = async (interaction) =>{
       await Data.save();
     } else if(num < num2) {
       end += `我獲得 ${num2} 點，我贏了😁\n<a:lose:1086958360705892522> 你輸了 **${win}** 點`
-      Data.Wallet -= win;
-      await Data.save();
+      if (Data.Wallet+Data.Bank < win) {
+        Data.Wallet = 0;
+        await Data.save();
+      } else {
+        Data.Wallet -= win;
+        await Data.save();
+      }
     } else {
       end += `我獲得 ${num2} 點，我們平手😘\n你獲得了 1 點`
       Data.Wallet += 1;

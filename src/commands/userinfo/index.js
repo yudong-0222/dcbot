@@ -40,7 +40,7 @@ export const action = async (interaction) =>{
   .addFields({name: '加入本群時間 <:time:1085145666445135924>', value: `<t:${parseInt(member.joinedAt /1000)}:R>`, inline: true})
   .addFields({name: '帳號創建時間 ⏱️', value: `<t:${parseInt(user.createdAt /1000)}:R>`, inline: true})
   .addFields({name: `使用者ID <:idcard:1085144829308186685>`, value: "`"+`${user.id}`+"`", inline: true})
-  .addFields({name: `社會信用點數 <a:purpleCard:1086599525726175292>`, value: "`"+`${total}`+"` 點", inline: true})
+  .addFields({name: `社會信用點數 <a:purpleCard:1086599525726175292>`, value: !Data ? "`"+`${total}`+"`" : "`"+`${total}`+"` 點" , inline: true})
   .setTimestamp()
  
   await interaction.reply({embeds: [embed]});

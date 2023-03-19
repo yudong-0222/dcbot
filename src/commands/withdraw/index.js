@@ -19,7 +19,7 @@ export const action = async (interaction) =>{
   if(!Data) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此操作\n因為你沒有帳戶`, ephemeral: true})
   if(amount.startsWith('-')) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法提領負數點數額`,ephemeral: true},)
 
-  if(amount.toLowerCase === 'all' || amount.toLowerCase === '全部') {
+  if(amount.toLowerCase() === 'all' || amount.toLowerCase() === '全部') {
     if(Data.Bank === 0) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你沒有點數能夠做這個!`, ephemeral: true})
     
     Data.Wallet += Data.Bank;
@@ -46,7 +46,7 @@ export const action = async (interaction) =>{
     .setTitle('<a:checked:1086296113818128414>丨交易成功')
     .setDescription(`成功將 ${parseInt(Converted)} 點**提領至錢包**`)
 
-    return await interaction.reply({embeds: [embed]})
+    return await interaction.reply({embeds: [embed], ephemeral: true})
 
   }
 

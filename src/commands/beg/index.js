@@ -27,8 +27,8 @@ export const action = async (interaction) =>{
 
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
   const waler = Data.Wallet;
-  let negative = Math.round((Math.random()* -30)-waler)
-  let positive = Math.round((Math.random()* 2)+waler)
+  let negative = Math.round((Math.random()* -150)+ 799)
+  let positive = Math.round((Math.random()* 300)+ 200)
 
   const posN = [negative, positive];
   const amount = Math.round((Math.random() * posN.length ))
@@ -51,7 +51,8 @@ export const action = async (interaction) =>{
       "社會組獎勵:",
       "自然組獎勵:",
       "你忘了給飛機加油了，助攻得到",
-      "在大樓裡連到飛機網路，今天還是911\n阿拉伯合作夥伴獲得:"
+      "在大樓裡連到飛機網路，今天還是911\n阿拉伯合作夥伴獲得:",
+      "你大便大到腳麻，點數獲得"
     ]
 
     const posName = Math.round(Math.random() * positiveChoices.length);

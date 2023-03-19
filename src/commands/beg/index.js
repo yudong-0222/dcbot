@@ -26,9 +26,9 @@ export const action = async (interaction) =>{
   const {user, guild} = interaction;
 
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
-
-  let negative = Math.round((Math.random()* -300)-1000)
-  let positive = Math.round((Math.random()*799)+10)
+  const waler = Data.Wallet;
+  let negative = Math.round((Math.random()* -30)-waler)
+  let positive = Math.round((Math.random()* 2)+waler)
 
   const posN = [negative, positive];
   const amount = Math.round((Math.random() * posN.length ))

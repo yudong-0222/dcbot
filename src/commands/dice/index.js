@@ -16,6 +16,7 @@ const noMoney = new EmbedBuilder()
 	.setColor('Red')
 	.setTitle('<a:wrong:1085174299628929034>丨你沒有這麼多點數!')
 	.setDescription('`/點數餘額` 查看你當前的餘額有多少')
+  .addFields({name: `解決方法:`, value: "`"+`/點數餘額`+"`"+` 查看餘額\n`+"`"+`/提領`+"`"+` 將點數提領到錢包使用`})
 	.setTimestamp()
   
 
@@ -24,7 +25,7 @@ export const command = new SlashCommandBuilder()
 .setDescription('🎲 骰子遊戲: 與機器人比大小')
 .addStringOption(option => 
     option.setName('點數')
-    .setDescription("你想要花費點數")
+    .setDescription("你想要花費點數,可以填入數字或者all")
     .setRequired(true)
   )
 
@@ -39,6 +40,12 @@ export const action = async (interaction) =>{
     if(amount.toLowerCase() === 'all' || amount.toLowerCase() === "全部")  {
       if(Data.Wallet === 0) return await interaction.reply({embeds: [noMoney], ephemeral: true});
       amount = Data.Wallet;
+    } else {
+      const wrong = new EmbedBuilder()
+      .setColor('Red')
+      .setTitle('<a:wrong:1085174299628929034>丨僅能輸入 `數字` 或者 `all`!')
+      .setTimestamp()
+      return await interaction.editReply({embeds: [wrong], ephemeral: true})
     }
     const appStore = useAppStore()
     const client = appStore.client;
@@ -77,7 +84,7 @@ export const action = async (interaction) =>{
       timeout.push(interaction.user.id);
       setTimeout(() => {
         timeout.shift();
-      },10000)
+      },3000)
   } catch (error) {
     console.log(`/骰子遊戲 有錯誤: ${error}`);
     const errorCode = new EmbedBuilder()

@@ -30,7 +30,7 @@ export const action = async (interaction) =>{
   if(!Data) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法進行搶劫 <a:bunbun:991105824170713088>\n因為你沒有帳戶`, ephemeral: true});
   if(userStealing == interaction.user) return interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法搶劫你自己 <a:bunbun:991105824170713088>`, ephemeral: true});
   if(!DataUser) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法搶劫他\n因為該使用者沒有帳戶 <a:bunbun:991105824170713088>`, ephemeral: true});
-  if(DataUser.Wallet <= 0) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法搶劫他 <a:bunbun:991105824170713088>\n**他已經沒錢了QQ**`, ephemeral: true});
+  if(DataUser.Wallet <= 0) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法搶劫他 <a:bunbun:991105824170713088>\n**他身上沒有錢QQ**`, ephemeral: true});
 
   let negative = Math.round((Math.random()* -800) -10);
   let positive = Math.round((Math.random()* 500)+ 10);
@@ -59,7 +59,7 @@ export const action = async (interaction) =>{
     const begEmbed = new EmbedBuilder()
     .setColor('Green')
     .setTitle('<a:bunbun:991105824170713088> 搶劫成功!')
-    .addFields({name: `你**搶劫了** ${userStealing.tag}`,value: `${positiveChoices[[posName]]} ${value}`});
+    .addFields({name: `${user.tag} **搶劫了** ${userStealing.tag}`,value: `${positiveChoices[[posName]]} ${value}`});
 
     await interaction.reply({embeds: [begEmbed]})
 
@@ -78,17 +78,10 @@ export const action = async (interaction) =>{
       const stringV = `${value}`
       nonSymbol = await stringV.slice(1);
 
-      const beblostEmbed = new EmbedBuilder()
-    .setColor('Red')
-    .setTitle('<a:policeWa:1086585371451740230> 搶劫失敗! <a:bunbun:991105824170713088> ')
-    .addFields({name: `你**搶劫了** ${userStealing.tag}`,value: `> 但你最終失敗了!`});
-
-    }
-    
     const beblostEmbed = new EmbedBuilder()
     .setColor('Red')
     .setTitle('<a:wrong:1085174299628929034> 搶劫失敗! <a:bunbun:991105824170713088> ')
-    .addFields({name: `你**搶劫了** ${userStealing.tag}`,value: `> 但你失敗了!`});
+    .addFields({name: `${user.tag} **搶劫了** ${userStealing.tag}`,value: `> 但你失敗了!`});
 
     await interaction.reply({embeds: [beblostEmbed]})
   }
@@ -96,6 +89,7 @@ export const action = async (interaction) =>{
   timeout.push(interaction.user.id);
   setTimeout(()=>{
     timeout.shift();
-  }, 3000)
+  }, 30000)
 
-} 
+  } 
+}

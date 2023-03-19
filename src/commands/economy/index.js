@@ -53,39 +53,59 @@ export const action = async (interaction) =>{
   const message = await interaction.reply({ embeds: [embed], components: [button]})
   const collector = await message.createMessageComponentCollector();
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
+  let total;
 
   collector.on(`collect`, async i =>{
-    if (i.customId === 'page1') {
-      if(i.user.id != interaction.user.id) {
-        return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
+    try {
+      if (i.customId === 'page1') {
+        if(i.user.id != interaction.user.id) {
+          return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
+        }
+        if(Data) {
+          total = Data.Bank + Data.Wallet
+          if(total < 0) {
+            return i.reply({content: `<a:wrong:1085174299628929034>丨您目前處於欠債狀態，無法重新建立帳戶\n你必須把債還清才有權限做到這個!`, ephemeral: true})
+          } 
+          
+          return i.reply({content: `<a:wrong:1085174299628929034>丨你已經擁有帳戶了`, ephemeral: true});
+        }
+        
+        const oneDayMs = 24 * 60 * 60 * 1000
+        Data = new ecoSchema({
+          Guild: interaction.guild.id,
+          User: user.id,
+          Bank: 0,
+          Wallet: 1000,
+          lastDaily: new Date(Date.now() - oneDayMs),
+        })
+        await Data.save();
+        await i.update({embeds: [embed2], components: [] })
       }
-      if(Data) return i.reply({content: `<a:wrong:1085174299628929034>丨你已經擁有帳戶了`, ephemeral: true});
-      // if(total < 0) {
-      //   return i.reply({content: `<a:wrong:1085174299628929034>丨您目前處於欠債狀態，無法重新建立帳戶\n你必須把債還清才有權限做到這個!`, ephemeral: true})
-      // } 
-      const oneDayMs = 24 * 60 * 60 * 1000
-      Data = new ecoSchema({
-        Guild: interaction.guild.id,
-        User: user.id,
-        Bank: 0,
-        Wallet: 1000,
-        lastDaily: new Date(Date.now() - oneDayMs),
-      })
-
-      await Data.save();
-      await i.update({embeds: [embed2], components: [] })
-    }
-    if (i.customId === 'page2') {
-      ;
-      if(i.user.id != interaction.user.id) {
-        return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
+      if (i.customId === 'page2') {
+        ;
+        if(i.user.id != interaction.user.id) {
+          return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
+        }
+        
+        if(!Data) {
+          return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此操作\n因為你沒有帳戶`, ephemeral: true});
+        } else {
+          total = Data.Bank + Data.Wallet
+          if(total < 0) return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此指令，因為您仍然負債。\n把債還完才有權限刪除帳戶!`, ephemeral: true});
+        }
+        
+        await Data.deleteOne();
+        await i.update({embeds: [embed3], components: [] })
       }
-      // if(total < 0) return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此指令，因為您仍然負債。\n把債還完才有權限刪除帳戶!`, ephemeral: true});
-      
-      if(!Data) return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此操作\n因為你沒有帳戶`, ephemeral: true});
-      
-      await Data.deleteOne();
-      await i.update({embeds: [embed3], components: [] })
+    } catch (error) {
+      console.log(`/帳戶 有錯誤: ${error}`)
+      const errorCode = new EmbedBuilder()
+      .setColor('Red')
+      .setTitle('<a:Animatederror:1086903258993406003>丨不好!出現了錯誤')
+      .setDescription("如果不能排除，請通知給作者!:") 
+      .addFields({name: `錯誤訊息:`, value: "```"+`${error}`+"```"})
+      .setTimestamp()  
+      return await i.reply({embeds: [errorCode]})
     }
   })
 }

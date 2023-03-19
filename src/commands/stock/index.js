@@ -14,6 +14,7 @@ export const action = async (interaction) =>{
     const client = appStore.client;
     const aa = await interaction.reply({ content: '<a:load:1084371236836081674> 正在取得股票資訊...'});
     await wait(5000);
+    await interaction.deleteReply();
     const e = new EmbedBuilder()
     .setColor('Red')
     .setTitle('<a:wrong:1085174299628929034>丨股票系統尚未啟用')

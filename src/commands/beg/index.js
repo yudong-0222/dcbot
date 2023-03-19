@@ -40,7 +40,7 @@ export const action = async (interaction) =>{
     Data.Wallet += value;
     await Data.save();
   }
-
+  
   if(value > 0) {
     const positiveChoices = [
       "天上掉下來一坨屎，你吃掉了並且獲得",

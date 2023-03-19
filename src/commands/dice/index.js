@@ -33,19 +33,21 @@ export const action = async (interaction) =>{
   try {
     let Data = await ecoShema.findOne({Guild: interaction.guild.id, User: interaction.user.id})
     let amount = interaction.options.getString(`點數`);
+    const Converted = Number(amount)
 
     if (timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [embedss], ephemeral: true})
-    if(amount.startsWith('-')) return await interaction.reply({name: `<a:wrong:1085174299628929034>丨`+"`"+`不能輸入負數!`+"`",ephemeral: true})
+    if(amount.startsWith('-')) return interaction.reply({content: `<a:wrong:1085174299628929034>丨不能輸入負數!` ,ephemeral: true})
     if(amount > Data.Wallet && amount > Data.Bank) return await interaction.reply({embeds: [noMoney], ephemeral: true})
-    if(amount.toLowerCase() === 'all' || amount.toLowerCase() === "全部")  {
-      if(Data.Wallet <= 0) return await interaction.reply({embeds: [noMoney], ephemeral: true});
-      amount = Data.Wallet;
-    } else {
+    
+    if(!(amount.toLowerCase() === 'all') && isNaN(Converted) === true)  {
       const wrong = new EmbedBuilder()
       .setColor('Red')
       .setTitle('<a:wrong:1085174299628929034>丨僅能輸入 `數字` 或者 `all`!')
       .setTimestamp()
       return await interaction.reply({embeds: [wrong], ephemeral: true})
+    } else {
+      if(Data.Wallet <= 0) return await interaction.reply({embeds: [noMoney], ephemeral: true});
+      amount = Data.Wallet;
     }
     const appStore = useAppStore()
     const client = appStore.client;

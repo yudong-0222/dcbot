@@ -79,7 +79,7 @@ export const action = async (interaction) =>{
         .setTitle(`🎲你獲得了 ${num} 點`)
         .setDescription(end)
       
-      interaction.editReply({embeds: [DiceE]})
+      await interaction.editReply({embeds: [DiceE]})
       
       timeout.push(interaction.user.id);
       setTimeout(() => {

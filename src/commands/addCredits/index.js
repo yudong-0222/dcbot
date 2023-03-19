@@ -26,7 +26,7 @@ export const action = async (interaction) =>{
     const amount = interaction.options.getString('點數')
     const tar = interaction.options.getUser('使用者')
     let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: tar.id});
-    if(!Data) return await interaction.editReply({name: `<a:wrong:1085174299628929034>丨他沒有帳戶`, ephemeral: true});
+    if(!Data) return await interaction.editReply({content: "<a:wrong:1085174299628929034>丨他沒有帳戶", ephemeral: true});
 
     const Converted = Number(amount);
 

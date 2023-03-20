@@ -15,21 +15,13 @@ const noAccount = new EmbedBuilder()
 	.setDescription('因為你沒有帳號!\n> 使用 `/帳戶`\n創建一個帳戶使用這個!')
 	.setTimestamp()
 
-const did = new EmbedBuilder()
-	.setColor('Green')
-	.setTitle('<a:48:1086689450714730506>丨獎勵領取完畢')
-	.setDescription('你領取了 **每日獎勵**')
-	.setTimestamp()  
+
 
 const dailyError = new EmbedBuilder()
 	.setColor('Red')
 	.setTitle('<a:wrong:1085174299628929034>丨獎勵無法領取!')
 	.setDescription('原因: **帳戶問題**!\n> Error Code: `ACER001`\n*可能是你的帳戶仍然是舊版*\n**(僅能重新建立ㄌQQ)**')
 	.setTimestamp()    
-
-
-
-
 
 export const command = new SlashCommandBuilder()
 .setName('每日獎勵')
@@ -48,12 +40,19 @@ export const action = async (interaction) =>{
     } else {
       const lastDailyDate = Data.lastDaily.toDateString();
       const currentDate = new Date().toDateString();
+      if(!Data.lastDaily) return await interaction.editReply({embeds: [dailyError]});
       if (lastDailyDate === currentDate) {
         return await interaction.editReply({embeds: [cannot]})
       }
-      Data.Wallet += 1000;
+      let amount = Math.round(Math.random()*300)+25;
+      Data.Wallet += amount;
       Data.lastDaily = new Date();
       await Data.save();
+      const did = new EmbedBuilder()
+      .setColor('Green')
+      .setTitle('<a:48:1086689450714730506>丨獎勵領取完畢')
+      .setDescription(`你領取了 **每日獎勵**\n領取了 **${amount}** 點`)
+      .setTimestamp()  
       interaction.editReply({embeds: [did]})
     }
   } catch (error) {

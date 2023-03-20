@@ -51,7 +51,7 @@ export const action = async (interaction) =>{
     }
     const appStore = useAppStore()
     const client = appStore.client;
-    const win = Math.floor(Math.random()* amount )*2;
+    const win = Math.round(Math.random()* amount )*2;
     const num = Math.floor(Math.random() * (6-1)) +1;
     const num2 = Math.floor(Math.random() * (6-1)) +1;
     let end = "";

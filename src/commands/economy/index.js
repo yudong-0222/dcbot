@@ -8,7 +8,8 @@ export const command = new SlashCommandBuilder()
 
 
 export const action = async (interaction) =>{
-  const appStore = useAppStore()
+  try {
+    const appStore = useAppStore()
   const client = appStore.client;
   
   const {user, guild} = interaction;
@@ -108,4 +109,15 @@ export const action = async (interaction) =>{
       return await i.reply({embeds: [errorCode]})
     }
   })
+  } catch (error) {
+    console.log(`/帳戶 有錯誤: ${error}`);
+    const errorCode = new EmbedBuilder()
+    .setColor('Red')
+    .setTitle('<a:Animatederror:1086903258993406003>丨不好!出現了錯誤')
+    .setDescription("如果不能排除，請通知給作者!:") 
+    .addFields({name: `錯誤訊息:`, value: "```"+`${error}`+"```"})
+    .setTimestamp()  
+    return await interaction.reply({embeds: [errorCode]})
+  }
+  
 }

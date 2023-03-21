@@ -14,7 +14,8 @@ export const command = new SlashCommandBuilder()
     .setRequired(false))
 
 export const action = async (interaction) =>{
-  const appStore = useAppStore()
+  try {
+    const appStore = useAppStore()
 
   const user = interaction.options.getUser('使用者') || interaction.user;
   const member = await interaction.guild.members.fetch(user.id);
@@ -44,4 +45,14 @@ export const action = async (interaction) =>{
   .setTimestamp()
  
   await interaction.reply({embeds: [embed]});
+  } catch (error) {
+    const errorCode = new EmbedBuilder()
+    .setColor('Red')
+    .setTitle('<a:Animatederror:1086903258993406003>丨不好!出現了錯誤')
+    .setDescription("如果不能排除，請通知給作者!:") 
+    .addFields({name: `錯誤訊息:`, value: "```"+`${error}`+"```"})
+    .setTimestamp()  
+    return await interaction.reply({embeds: [errorCode]})
+  }
+  
 }

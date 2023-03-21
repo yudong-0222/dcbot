@@ -29,7 +29,8 @@ export const command = new SlashCommandBuilder()
 .setDMPermission(false)
 
 export const action = async (interaction) =>{
-  const appStore = useAppStore()
+  try {
+    const appStore = useAppStore()
   const client = appStore.client;
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
   try {
@@ -64,6 +65,15 @@ export const action = async (interaction) =>{
     .addFields({name: `錯誤訊息:`, value: "```"+`${error}`+"```"})
     .setTimestamp()  
     return await interaction.editReply({embeds: [errorCode]})
+  }
+  } catch (error) {
+    const errorCode = new EmbedBuilder()
+    .setColor('Red')
+    .setTitle('<a:Animatederror:1086903258993406003>丨不好!出現了錯誤')
+    .setDescription("如果不能排除，請通知給作者!:") 
+    .addFields({name: `錯誤訊息:`, value: "```"+`${error}`+"```"})
+    .setTimestamp()  
+    return await interaction.reply({embeds: [errorCode]})
   }
 }
 

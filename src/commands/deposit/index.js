@@ -8,7 +8,8 @@ export const command = new SlashCommandBuilder()
 .addStringOption(option => option.setName('數量').setDescription(`愈存放之點數數量`).setRequired(true))
 
 export const action = async (interaction) =>{
-  const appStore = useAppStore()
+  try {
+    const appStore = useAppStore()
   const client = appStore.client;
   
   const { options, user, guild} = interaction;
@@ -49,5 +50,13 @@ export const action = async (interaction) =>{
     return await interaction.reply({embeds: [embed], ephemeral: true})
 
   }
-
+  } catch (error) {
+    const errorCode = new EmbedBuilder()
+    .setColor('Red')
+    .setTitle('<a:Animatederror:1086903258993406003>丨不好!出現了錯誤')
+    .setDescription("如果不能排除，請通知給作者!:") 
+    .addFields({name: `錯誤訊息:`, value: "```"+`${error}`+"```"})
+    .setTimestamp()  
+    return await interaction.reply({embeds: [errorCode]})
+  }
 }

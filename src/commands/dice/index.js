@@ -4,7 +4,11 @@ import ecoShema from '../../Schemas/ecoSchema'
 
 
 var timeout = [];
-
+const noAccount = new EmbedBuilder()
+	.setColor('Red')
+	.setTitle('<a:wrong:1085174299628929034>丨請先創建一個帳戶!')
+	.setDescription('你必須要有帳戶才能夠遊玩\n使用 `/帳戶`!')
+	.setTimestamp()
 // inside a command, event listener, etc.
 const embedss = new EmbedBuilder()
 	.setColor('Red')
@@ -34,6 +38,9 @@ export const action = async (interaction) =>{
     let Data = await ecoShema.findOne({Guild: interaction.guild.id, User: interaction.user.id})
     let amount = interaction.options.getString(`點數`);
     const Converted = Number(amount)
+
+    if(!Data) return await interaction.reply({embeds: [noAccount]})
+
 
     if (timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [embedss], ephemeral: true})
     if(amount.startsWith('-')) return interaction.reply({content: `<a:wrong:1085174299628929034>丨不能輸入負數!` ,ephemeral: true})
@@ -100,6 +107,6 @@ export const action = async (interaction) =>{
       .setDescription("如果不能排除，請通知給作者!:") 
       .addFields({name: `錯誤訊息:`, value: "```"+`${error}`+"```"})
       .setTimestamp()  
-      return await interaction.editReply({embeds: [errorCode]})
+      return await interaction.reply({embeds: [errorCode]})
   }
 } 

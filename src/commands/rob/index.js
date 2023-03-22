@@ -17,9 +17,9 @@ export const command = new SlashCommandBuilder()
 
 export const action = async (interaction) =>{
   try {
-    if(timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [timeE],ephemeral:true})
     const appStore = useAppStore()
     const client = appStore.client;
+    if(timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [timeE],ephemeral:true})
     
     const { options, user, guild} = interaction;
 
@@ -91,7 +91,6 @@ export const action = async (interaction) =>{
     setTimeout(()=>{
       timeout.shift();
     }, 30000)
-
     } 
   } catch (error) {
     console.log(`/搶劫 有錯誤 ${error}`);

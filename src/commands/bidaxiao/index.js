@@ -83,24 +83,26 @@ export const action = async (interaction) =>{
 
     const eee = new EmbedBuilder()
     .setTitle(`<:diamond:990508369049686066>丨雙人比大小 - 邀請`)
-    .setDescription(`<@${user.id}> 邀請 <@${ememy.id}> 參與比大小\n點擊下方的按鈕同意或拒絕`)
+    .setDescription(`<@${user.id}> 邀請 <@${ememy.id}> 遊玩**比大小**\n將花費你 \`${cost} 點\` 進行遊戲\n點擊下方的按鈕同意或拒絕`)
     interaction.reply({content:`<@${ememy.id}>`,embeds: [eee], components: [btn]})
     const collector = interaction.channel.createMessageComponentCollector({time: 30000});
     collector.on('collect', async i => {
-      if(i.member.id === interaction.user.id) {
+      if(i.member.id === interaction.user.id || i.member.id != ememy.id) {
         return i.reply({content: `<a:Animatederror:1086903258993406003>丨你不是被邀請者`, ephemeral: true})
-      } 
+      }
       if (i.customId === 'accept') {
           if (num1 > num2) {
           const result = new EmbedBuilder()
               .setColor('Random')
               .setTitle('<:diamond:990508369049686066>丨遊戲結果')
               .setDescription(`<@${user.id}> 的數字: ${num1}\n<@${ememy.id}> 的數字: ${num2}`)
-              .addFields({ name: '比對結果', value: `<@${user.id}> 獲勝\n獲得 ${money} 點`, inline: true })
+              .addFields({ name: '<a:Snowsgiving22_AnimatedEmojis_mal:1084361545947021373> 比對結果', value: `<@${user.id}> 獲勝\n獲得 ${money} 點`, inline: true })
               .setTimestamp()
-          interaction.editReply({content: `比對中...`, embeds:[],components: []}).then(()=>{
-              i.update({content:" ", embeds: [result], components:[]});
-          })
+          interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...`, embeds:[],components: []}).then(()=>{
+            setTimeout(function() {
+              interaction.editReply({content:" ", embeds: [result], components:[]});
+            }, 3000);
+          });
           // await wait(3500);
           Data.Wallet += money;
           Data2.Wallet -= money;
@@ -111,11 +113,13 @@ export const action = async (interaction) =>{
               .setColor('Random')
               .setTitle('<:diamond:990508369049686066>丨遊戲結果')
               .setDescription(`<@${user.id}> 的數字: ${num1}\n${ememy.tag} 的數字: ${num2}`)
-              .addFields({ name: '比對結果', value: `<@${ememy.id}> 獲勝\n獲得 ${money} 點`, inline: true })
+              .addFields({ name: '<a:Snowsgiving22_AnimatedEmojis_mal:1084361545947021373> 比對結果', value: `<@${ememy.id}> 獲勝\n獲得 ${money} 點`, inline: true })
               .setTimestamp()
-          interaction.editReply({content: `比對中...`, embeds:[],components: []}).then(()=>{
-              i.update({content:" ", embeds: [result], components:[]});
-          })
+          interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...`, embeds:[],components: []}).then(()=>{
+            setTimeout(function() {
+              interaction.editReply({content:" ", embeds: [result], components:[]});
+            }, 3000);
+          });
           Data.Wallet -= money;
           Data2.Wallet += money;
           await Data.save();
@@ -127,11 +131,13 @@ export const action = async (interaction) =>{
               .setColor('Random')
               .setTitle('<:diamond:990508369049686066>丨遊戲結果')
               .setDescription(`<@${user.id}> 的數字: ${num1}\n${ememy.tag} 的數字: ${num2}`)
-              .addFields({ name: '比對結果', value: `**雙方平手**\n各獲得 1 點`, inline: true })
+              .addFields({ name: '<a:Snowsgiving22_AnimatedEmojis_mal:1084361545947021373> 比對結果', value: `**雙方平手**\n各獲得 1 點`, inline: true })
               .setTimestamp()
-          interaction.editReply({content: `比對中...`, embeds:[],components: []}).then(()=>{
-              i.update({content:" ", embeds: [result], components:[]});
-          })
+          interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...`, embeds:[],components: []}).then(()=>{
+            setTimeout(function() {
+              interaction.editReply({content:" ", embeds: [result], components:[]});
+            }, 3000);
+          });
           Data.Wallet += 1;
           Data2.Wallet += 1;
           await Data.save();
@@ -142,9 +148,9 @@ export const action = async (interaction) =>{
       if (i.customId === 'dd') {
         const aabab = new EmbedBuilder()
         .setColor('Random')
-        .setDescription(`<@${ememy.id}> 拒絕了 <@${user.id}> 的邀請!`)
+        .setDescription(`<a:Animatederror:1086903258993406003>丨<@${ememy.id}> 拒絕了 <@${user.id}> 的邀請!`)
         .setTimestamp()
-        .setTitle('雙人比大小 - 邀請')
+        .setTitle('雙人比大小 - 邀請 <:tickets:1088132098784768090>')
         
         interaction.editReply({content:'', embeds:[aabab], components:[]})
       }

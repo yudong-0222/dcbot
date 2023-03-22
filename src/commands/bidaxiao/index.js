@@ -50,7 +50,7 @@ export const action = async (interaction) =>{
 
     let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
     let Data2 = await ecoSchema.findOne({Guild: interaction.guild.id, User: ememy.id});
-    if(ememy.id === user.id) return await interaction.reply({name: '你不能和自己遊玩', ephemeral: true})
+    if(ememy.id === user.id) return await interaction.reply({content: '<a:Animatederror:1086903258993406003>丨你不能和自己遊玩', ephemeral: true})
     if(!Data || !Data2) return await interaction.reply({embeds: [noAccount]});
   
     const num1 = Math.round(Math.random()* 100)+1;

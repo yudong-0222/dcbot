@@ -57,8 +57,6 @@ export const action = async (interaction) =>{
     const num2 = Math.round(Math.random()* 100)+1;
     const money = Math.round(Math.random()*cost*1.5) +150;
 
-    let sleep = async (ms) => await new Promise(r => setTimeout(r,ms));
-
     if (cost.startsWith('-')) return interaction.reply({content: `<a:wrong:1085174299628929034>丨不能輸入負數!` ,ephemeral: true}) 
     if (cost > Data.Wallet || cost > Data2.Wallet ) return await interaction.reply({embeds: [noMoney], ephemeral: true})
 
@@ -100,14 +98,14 @@ export const action = async (interaction) =>{
               .setDescription(`<@${user.id}> 的數字: ${num1}\n<@${ememy.id}> 的數字: ${num2}`)
               .addFields({ name: '比對結果', value: `<@${user.id}> 獲勝\n獲得 ${money} 點`, inline: true })
               .setTimestamp()
+          interaction.editReply({content: `比對中...`, embeds:[],components: []}).then(()=>{
+              i.update({content:" ", embeds: [result], components:[]});
+          })
+          // await wait(3500);
           Data.Wallet += money;
           Data2.Wallet -= money;
-          Data.save();
-          Data2.save();
-          await sleep(5000)
-          interaction.editReply({content: `比對中...`, embeds:[],components: []})
-          // await wait(3500);
-          i.update({content:" " ,embeds: [result], components:[]})
+          await Data.save();
+          await Data2.save();
         } else if (num1 < num2) {
           const result = new EmbedBuilder()
               .setColor('Random')
@@ -115,14 +113,15 @@ export const action = async (interaction) =>{
               .setDescription(`<@${user.id}> 的數字: ${num1}\n${ememy.tag} 的數字: ${num2}`)
               .addFields({ name: '比對結果', value: `<@${ememy.id}> 獲勝\n獲得 ${money} 點`, inline: true })
               .setTimestamp()
+          interaction.editReply({content: `比對中...`, embeds:[],components: []}).then(()=>{
+              i.update({content:" ", embeds: [result], components:[]});
+          })
           Data.Wallet -= money;
           Data2.Wallet += money;
-          Data.save();
-          Data2.save();
-          await sleep(5000)
-          interaction.editReply({content: `比對中...`, embeds:[],components: []})
+          await Data.save();
+          await Data2.save();
           // await wait(3500);
-          i.update({content:" ", embeds: [result], components:[]});
+          
         } else {
           const result = new EmbedBuilder()
               .setColor('Random')
@@ -130,18 +129,23 @@ export const action = async (interaction) =>{
               .setDescription(`<@${user.id}> 的數字: ${num1}\n${ememy.tag} 的數字: ${num2}`)
               .addFields({ name: '比對結果', value: `**雙方平手**\n各獲得 1 點`, inline: true })
               .setTimestamp()
+          interaction.editReply({content: `比對中...`, embeds:[],components: []}).then(()=>{
+              i.update({content:" ", embeds: [result], components:[]});
+          })
           Data.Wallet += 1;
           Data2.Wallet += 1;
-          Data.save();
-          Data2.save();
-          interaction.editReply({content: `比對中...`, embeds:[],components: []})
-          await sleep(5000)
+          await Data.save();
+          await Data2.save();
           // await wait(3500);
-          i.update({content:" " ,embeds: [result], components:[]});
-      }
-      if (i.customId === 'dd') {
-        interaction.editReply({content:`<@${ememy.id}> 拒絕了你的邀請!`})
-      }
+      } 
+    }
+    if (i.customId === 'dd') {
+      const aabab = new EmbedBuilder()
+      .setColor('Random')
+      .setDescription(`<@${ememy.id}> 拒絕了 <@${user.id}> 的邀請!`)
+      .setTimestamp()
+      .setTitle('雙人比大小 - 邀請')
+      interaction.editReply({content:'', embeds:[aabab], components:[]})
     }
     })
   } catch (error) {

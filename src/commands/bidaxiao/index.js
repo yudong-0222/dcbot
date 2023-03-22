@@ -138,15 +138,16 @@ export const action = async (interaction) =>{
           await Data2.save();
           // await wait(3500);
       } 
-    }
-    if (i.customId === 'dd') {
-      const aabab = new EmbedBuilder()
-      .setColor('Random')
-      .setDescription(`<@${ememy.id}> 拒絕了 <@${user.id}> 的邀請!`)
-      .setTimestamp()
-      .setTitle('雙人比大小 - 邀請')
-      interaction.editReply({content:'', embeds:[aabab], components:[]})
-    }
+      }
+      if (i.customId === 'dd') {
+        const aabab = new EmbedBuilder()
+        .setColor('Random')
+        .setDescription(`<@${ememy.id}> 拒絕了 <@${user.id}> 的邀請!`)
+        .setTimestamp()
+        .setTitle('雙人比大小 - 邀請')
+        
+        interaction.editReply({content:'', embeds:[aabab], components:[]})
+      }
     })
   } catch (error) {
     console.log(`/雙人比大小 有錯誤: ${error}`);

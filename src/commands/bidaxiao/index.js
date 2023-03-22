@@ -23,7 +23,7 @@ const noAccount = new EmbedBuilder()
 
 
 export const command = new SlashCommandBuilder()
-.setName('bib')
+.setName('比大小')
 .setDescription('經濟系統 - 雙人比大小')
 .addUserOption(option =>
   option

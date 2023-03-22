@@ -21,17 +21,17 @@ export const action = async (interaction) =>{
 
   const appStore = useAppStore()
   const client = appStore.client;
-  
-  
+
   const {user, guild} = interaction;
 
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
-  const waler = Data.Wallet;
-  let negative = Math.round((Math.random()* -150)+ 799)
-  let positive = Math.round((Math.random()* 300)+ 200)
+  let taa = Data.Bank + Data.Wallet;
+
+  let negative = Math.round((Math.random()* - 300) - taa*1.5);
+  let positive = Math.round((Math.random()* 300) + taa/6);
 
   const posN = [negative, positive];
-  const amount = Math.round((Math.random() * posN.length ))
+  const amount = Math.round((Math.random() * posN.length))
   const value= posN[amount]
 
   if(!value) return await interaction.reply({content: `你甚麼都沒拿到 :D`, ephemeral: true})

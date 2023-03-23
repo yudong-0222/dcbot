@@ -3,7 +3,7 @@ import {useAppStore} from '../../store/app'
 
 export const command = new SlashCommandBuilder()
 .setName('say')
-.setDescription('✨ 用機器人來說出你的話，只有管理員能夠用')
+.setDescription('✨ 用機器人來說出你的話')
 .setDefaultMemberPermissions(0n)
 .addStringOption((option)=> 
   option.setName(`訊息`).setDescription('你想要傳送的訊息').setRequired(true)

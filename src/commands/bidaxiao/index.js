@@ -16,13 +16,6 @@ const noAccount = new EmbedBuilder()
   .setDescription('雙方必須要有帳戶才能夠遊玩\n使用 `/帳戶`!')
   .setTimestamp()
 
-  const noMoney = new EmbedBuilder()
-	.setColor('Red')
-	.setTitle('<a:wrong:1085174299628929034>丨其中一位玩家沒有這麼多點數!')
-	.setDescription('`/點數餘額` 查看當前的餘額有多少')
-  .addFields({name: `解決方法:`, value: "`"+`/點數餘額`+"`"+` 查看餘額\n`+"`"+`/提領`+"`"+` 將點數提領到錢包使用`})
-	.setTimestamp()
-
 const embedss = new EmbedBuilder()
 	.setColor('Red')
 	.setTitle('<a:wrong:1085174299628929034>丨請稍等一下!')
@@ -67,8 +60,24 @@ export const action = async (interaction) =>{
 
     if (cost.startsWith('-')) return interaction.reply({content: `<a:wrong:1085174299628929034>丨不能輸入負數!` ,ephemeral: true}) 
     if (cost > Data.Wallet || cost > Data2.Wallet ) {
-      if(cost > Data.Wallet+Data.Bank || cost > Data2.Wallet+Data2.Bank) {
+      if(cost > Data2.Wallet+Data2.Bank){
+        const noMoneyData2 = new EmbedBuilder()
+        .setColor('Red')
+        .setTitle(`<a:wrong:1085174299628929034>丨${ememy.tag} 沒有這麼多點數!`)
+        .setDescription('`/點數餘額` 查看當前的餘額有多少')
+        .addFields({name: `解決方法:`, value: "`"+`/點數餘額`+"`"+` 查看餘額\n`+"可選方案: `"+`/提領`+"`"+` 將點數提領到錢包使用`})
+        .setTimestamp()
+        return await interaction.reply({embeds: [noMoneyData2], ephemeral: true})
+      }
+      if(cost > Data.Wallet+Data.Bank) {
+        const noMoney = new EmbedBuilder()
+        .setColor('Red')
+        .setTitle(`<a:wrong:1085174299628929034>丨${user.tag} 沒有這麼多點數!`)
+        .setDescription('`/點數餘額` 查看當前的餘額有多少')
+        .addFields({name: `解決方法:`, value: "`"+`/點數餘額`+"`"+` 查看餘額\n`+"可選方案: `"+`/提領`+"`"+` 將點數提領到錢包使用`})
+        .setTimestamp()
         return await interaction.reply({embeds: [noMoney], ephemeral: true})
+
       } else if(cost > Data.Wallet){
         Data.Wallet = 0;
         Data.Bank -= cost;
@@ -94,9 +103,7 @@ export const action = async (interaction) =>{
       .setTitle('<a:wrong:1085174299628929034>丨僅能輸入 `數字`')
       .setTimestamp()
       return await interaction.reply({embeds: [wrong], ephemeral: true})
-    } else {
-      if(Data.Wallet <= 0 || Data2.Wallet <= 0) return await interaction.reply({embeds: [noMoney], ephemeral: true});
-    }
+    } 
     const btn = new ActionRowBuilder()
     .addComponents(
       new ButtonBuilder()
@@ -108,7 +115,7 @@ export const action = async (interaction) =>{
       .setCustomId('dd')
       .setLabel('拒絕遊玩')
       .setStyle(ButtonStyle.Danger)
-      .setEmoji(`<:X_:1076798408494436403>`)
+      .setEmoji(`<:error:1085154475070734357>`)
     );
 
     const eee = new EmbedBuilder()
@@ -134,15 +141,22 @@ export const action = async (interaction) =>{
             }, 3000);
           });
           // await wait(3500);
-          Data.Wallet += money;
-          Data2.Wallet -= money;
-          await Data.save();
-          await Data2.save();
+          if(money > Data2.Wallet+Data2.Bank){
+            Data2.Wallet = 0;
+            Data.Wallet += money;
+            await Data.save();
+            await Data2.save();
+          } else {
+            Data.Wallet += money;
+            Data2.Wallet -= money;
+            await Data.save();
+            await Data2.save();
+          }
         } else if (num1 < num2) {
           const result = new EmbedBuilder()
               .setColor('Random')
               .setTitle('<:diamond:990508369049686066>丨遊戲結果')
-              .setDescription(`<@${user.id}> 的數字: ${num1}\n${ememy.tag} 的數字: ${num2}`)
+              .setDescription(`<@${user.id}> 的數字: ${num1}\n<@${ememy.id}> 的數字: ${num2}`)
               .addFields({ name: '<a:Snowsgiving22_AnimatedEmojis_mal:1084361545947021373> 比對結果', value: `<@${ememy.id}> 獲勝\n獲得 ${money} 點`, inline: true })
               .setTimestamp()
           interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...`, embeds:[],components: []}).then(()=>{
@@ -150,17 +164,23 @@ export const action = async (interaction) =>{
               interaction.editReply({content:" ", embeds: [result], components:[]});
             }, 3000);
           });
-          Data.Wallet -= money;
-          Data2.Wallet += money;
-          await Data.save();
-          await Data2.save();
-          // await wait(3500);
-          
+          if (money > Data.Wallet+Data.Bank) {
+            Data.Wallet = 0;
+            Data2.Wallet += money;
+            await Data.save();
+            await Data2.save();
+          } else {
+            Data.Wallet -= money;
+            Data2.Wallet += money;
+            await Data.save();
+            await Data2.save();
+            // await wait(3500);
+          }
         } else {
           const result = new EmbedBuilder()
               .setColor('Random')
               .setTitle('<:diamond:990508369049686066>丨遊戲結果')
-              .setDescription(`<@${user.id}> 的數字: ${num1}\n${ememy.tag} 的數字: ${num2}`)
+              .setDescription(`<@${user.id}> 的數字: ${num1}\n<@${ememy.id}> 的數字: ${num2}`)
               .addFields({ name: '<a:Snowsgiving22_AnimatedEmojis_mal:1084361545947021373> 比對結果', value: `**雙方平手**\n各獲得 1 點`, inline: true })
               .setTimestamp()
           interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...`, embeds:[],components: []}).then(()=>{

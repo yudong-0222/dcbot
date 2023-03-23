@@ -27,12 +27,6 @@ export const action = async (interaction) =>{
         description: `夫以狩魚為主,觀景為輔,乘舟而搏`
       }
     ];
-    const optionsla = jobs.map(job => ({
-      label: job.name,
-      value: job.worktime,
-      description: job.description,
-      emoji: '👨‍🏭'
-    }));
 
     let pay = [];
     let nowJob = [];
@@ -43,7 +37,6 @@ export const action = async (interaction) =>{
       .setColor('Red')
       .setTitle('<a:Animatederror:1086903258993406003>丨你已經有工作了')
       .setDescription("📄 請查看以下資訊") 
-      .addFields({name: `現正進行的工作:`, value: "```"+`${nowJob}`+"```"})
       .setTimestamp()  
       return await interaction.editReply({embeds: [already]})
     }
@@ -51,7 +44,6 @@ export const action = async (interaction) =>{
       .setColor('Random')
       .setTitle('<:jobs:1088446692262674492>丨工作列表')
       .setDescription("📄 請查看以下資訊") 
-      .addFields({name: `現有之工作:`, value: "```"+`${nowJob}`+"```"})
       .setTimestamp()
     
     const components = (state) =>[
@@ -60,10 +52,16 @@ export const action = async (interaction) =>{
         .setCustomId('job-menu')
         .setPlaceholder('📃110人力銀行-工作選單')
         .setDisabled(state)
-        .addOptions(optionsla)
+        .addOptions(
+          jobs.map(job => ({
+            label: job.name,
+            value: job.worktime,
+            description: job.description,
+            emoji: '👨‍🏭'
+          }))
+        )
         )
     ]
-
     const initialMessage = await interaction.reply({embes: [workMsg], components: components(false)});
 
     const filter = (interaction) => interaction.user.id === interaction.member.id;
@@ -96,6 +94,6 @@ export const action = async (interaction) =>{
     .setDescription("如果不能排除，請通知給作者!:") 
     .addFields({name: `錯誤訊息:`, value: "```"+`${error}`+"```"})
     .setTimestamp()  
-    return await interaction.editReply({embeds: [errorCode]})
+    return await interaction.reply({embeds: [errorCode]})
   }
 }

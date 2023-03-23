@@ -218,5 +218,5 @@ export const action = async (interaction) =>{
   timeout.push(interaction.user.id);
   setTimeout(()=> {
     timeout.shift();
-  },30000)
+  },5000)
 }

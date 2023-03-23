@@ -28,64 +28,46 @@ export const action = async (interaction) =>{
       }
     ];
 
-    let pay = [];
-    let nowJob = [];
 
-    const haveJob = false;
-    if(haveJob) {
-      const already = new EmbedBuilder()
-      .setColor('Red')
-      .setTitle('<a:Animatederror:1086903258993406003>丨你已經有工作了')
-      .setDescription("📄 請查看以下資訊") 
-      .setTimestamp()  
-      return await interaction.editReply({embeds: [already]})
-    }
-    const workMsg = new EmbedBuilder()
+    const jobSelect = new ActionRowBuilder()
+    .addComponents(
+      new StringSelectMenuBuilder()
+      .setCustomId('job-menu')
+      .setPlaceholder(`📃110人力銀行 - 工作查詢`)
+      .addOptions(
+        jobs.map(job=>({
+          label: job.name,
+          value: job.worktime,
+          description: job.description,
+        }))
+      )
+    )
+    const firstMsg = new EmbedBuilder()
       .setColor('Random')
       .setTitle('<:jobs:1088446692262674492>丨工作列表')
       .setDescription("📄 請查看以下資訊") 
       .setTimestamp()
+
+    const selectionRespond = await interaction.reply({embeds: [firstMsg], components: [jobSelect]})
     
-    const components = (state) =>[
-      new ActionRowBuilder().addComponents(
-        new StringSelectMenuBuilder()
-        .setCustomId('job-menu')
-        .setPlaceholder('📃110人力銀行-工作選單')
-        .setDisabled(state)
-        .addOptions(
-          jobs.map(job => ({
-            label: job.name,
-            value: job.worktime,
-            description: job.description,
-            emoji: '👨‍🏭'
-          }))
-        )
-        )
-    ]
-    const initialMessage = await interaction.reply({embes: [workMsg], components: components(false)});
 
-    const filter = (interaction) => interaction.user.id === interaction.member.id;
-
-    const collector = interaction.channel.createMessageComponetCollector({
-      filter,
-      componentType: ComponentType.StringSelect
-    });
-
-    collector.on("collect", (interaction)=> {
-      const [TheJobName] = jobs.values;
-      const categoryMsg = new EmbedBuilder()
-      .setTitle(`${TheJobName} 工作`)
-      .setDescription(`這是一個工握`)
-      .addFields({
-        name:jobs.name,
-        value:jobs.description+jobs.worktime
-      })
-      interaction.update({embeds: [categoryMsg]})
-    });
-
-    collector.on("end", ()=>{
-      initialMessage.edit({ components: components(true)})
+    const collector = await selectionRespond.createMessageComponentCollector({ ComponentType: ComponentType.StringSelect})
+    collector.on("collect", async (i)=>{
+      if (i.customId === "job-menu") {
+        console.log("yes");
+        const value = i.values[0];
+        if (value === `老師`) {
+          return i.reply({content: `老師...`})
+        }
+        if (value === `漁夫`) {
+          return i.reply({content: `漁夫有多餘`})
+        }
+      }
     })
+
+
+
+
   } catch (error) {
     console.log(`/打工 有錯誤: ${error}`);
     const errorCode = new EmbedBuilder()

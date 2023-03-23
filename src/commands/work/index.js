@@ -17,56 +17,89 @@ export const action = async (interaction) =>{
     
     const jobs =[
       {
-        name: `老師`,
-        worktime: `5`, //分鐘
-        description: `師者,所以傳道授業解惑也`
+        name: "老師",
+        worktime: "5", //分鐘
+        description: "師者,所以傳道授業解惑也",
       },
       {
-        name: `漁夫`,
-        worktime: `15`, //5分鐘冷卻]
-        description: `夫以狩魚為主,觀景為輔,乘舟而搏`
+        name: "漁夫",
+        worktime: "15", //5分鐘冷卻]
+        description: "夫以狩魚為主,觀景為輔,乘舟而搏",
       }
     ];
 
 
-    const jobSelect = new ActionRowBuilder()
-    .addComponents(
-      new StringSelectMenuBuilder()
-      .setCustomId('job-menu')
-      .setPlaceholder(`📃110人力銀行 - 工作查詢`)
-      .addOptions(
-        jobs.map(job=>({
-          label: job.name,
-          value: job.worktime,
-          description: job.description,
-        }))
-      )
-    )
     const firstMsg = new EmbedBuilder()
       .setColor('Random')
       .setTitle('<:jobs:1088446692262674492>丨工作列表')
       .setDescription("📄 請查看以下資訊") 
       .setTimestamp()
 
+      const jobSelect = new ActionRowBuilder()
+      .addComponents(
+        new StringSelectMenuBuilder()
+        .setCustomId('job-menu')
+        .setPlaceholder(`📃110人力銀行 - 工作查詢`)
+        .addOptions(
+          jobs.map(job=>({
+            label: job.name,
+            value: job.name,
+            description: job.description,
+          }))
+        )
+      )
     const selectionRespond = await interaction.reply({embeds: [firstMsg], components: [jobSelect]})
     
-
+  
     const collector = await selectionRespond.createMessageComponentCollector({ ComponentType: ComponentType.StringSelect})
     collector.on("collect", async (i)=>{
-      if (i.customId === "job-menu") {
-        console.log("yes");
-        const value = i.values[0];
-        if (value === `老師`) {
-          return i.reply({content: `老師...`})
+      const value = i.values[0]
+        if (i.customId === "job-menu") {
+          if(value === ("老師")){
+            const teacher = new EmbedBuilder()
+              .setColor('Random')
+              .setTitle('<:jobs:1088446692262674492> - 老師')
+              .setDescription("📄 請查看以下資訊") 
+              .addFields({
+                name:`工作名稱 - ${jobs[0].name}`,
+                value: '(暫定) 老師\n開課 由群組人員進來聽課數量為主\n 越多人錢越多\n工作時間5分鐘'
+              })
+              .setTimestamp()
+
+            const btn = new ActionRowBuilder()
+            .addComponents(
+              new ButtonBuilder()
+              .setCustomId('chose')
+              .setLabel('選擇此工作')
+              .setStyle(ButtonStyle.Success)
+            )
+
+            return i.reply({embeds: [teacher], components: [btn]})
+          }
+          if (value === "漁夫") {
+            const fish = new EmbedBuilder()
+              .setColor('Random')
+              .setTitle('<:jobs:1088446692262674492> - 漁夫')
+              .setDescription("📄 請查看以下資訊") 
+              .addFields({
+                name:`工作名稱 - ${jobs[0].name}`,
+                value: '(暫定) 釣魚\n以圖表方式來釣魚\n每釣到一隻增加50點 \n工作時間最多15分鐘 \n5分鐘後才可進行下次釣魚工作'
+              })
+              .setTimestamp()
+
+            const btn = new ActionRowBuilder()
+            .addComponents(
+              new ButtonBuilder()
+              .setCustomId('chose')
+              .setLabel('選擇此工作')
+              .setStyle(ButtonStyle.Success)
+            )
+
+            return i.reply({embeds: [fish], components: [btn]})
+          }
         }
-        if (value === `漁夫`) {
-          return i.reply({content: `漁夫有多餘`})
-        }
-      }
     })
-
-
-
+  
 
   } catch (error) {
     console.log(`/打工 有錯誤: ${error}`);

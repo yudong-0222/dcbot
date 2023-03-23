@@ -2,6 +2,8 @@ import {SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, Butt
 import {useAppStore} from '../../store/app'
 import ecoSchema from '../../Schemas/ecoSchema'
 
+var timeout = []
+
 const putwal = new EmbedBuilder()
     .setColor('Red')
     .setTitle('<a:wrong:1085174299628929034>丨你的錢包沒有錢!')
@@ -21,6 +23,11 @@ const noAccount = new EmbedBuilder()
   .addFields({name: `解決方法:`, value: "`"+`/點數餘額`+"`"+` 查看餘額\n`+"`"+`/提領`+"`"+` 將點數提領到錢包使用`})
 	.setTimestamp()
 
+const embedss = new EmbedBuilder()
+	.setColor('Red')
+	.setTitle('<a:wrong:1085174299628929034>丨請稍等一下!')
+	.setDescription('你執行指令的速度太快了!')
+	.setTimestamp()
 
 export const command = new SlashCommandBuilder()
 .setName('比大小')
@@ -40,6 +47,7 @@ export const command = new SlashCommandBuilder()
 
 export const action = async (interaction) =>{
   try {
+    if (timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [embedss], ephemeral: true})
     const appStore = useAppStore()
     const client = appStore.client;
     const cost = interaction.options.getString('點數')
@@ -55,15 +63,35 @@ export const action = async (interaction) =>{
   
     const num1 = Math.round(Math.random()* 100)+1;
     const num2 = Math.round(Math.random()* 100)+1;
-    const money = Math.round(Math.random()*cost*1.5) +150;
+    const money = Math.round(Math.random() *10) + cost*2;
 
     if (cost.startsWith('-')) return interaction.reply({content: `<a:wrong:1085174299628929034>丨不能輸入負數!` ,ephemeral: true}) 
-    if (cost > Data.Wallet || cost > Data2.Wallet ) return await interaction.reply({embeds: [noMoney], ephemeral: true})
+    if (cost > Data.Wallet || cost > Data2.Wallet ) {
+      if(cost > Data.Wallet+Data.Bank || cost > Data2.Wallet+Data2.Bank) {
+        return await interaction.reply({embeds: [noMoney], ephemeral: true})
+      } else if(cost > Data.Wallet){
+        Data.Wallet = 0;
+        Data.Bank -= cost;
+        await Data.save();
+      } else if(cost > Data2.Wallet) {
+        Data2.Wallet =0;
+        Data2.Bank -= cost;
+        await Data2.save();
+      } else if (cost > Data.Bank) {
+        Data.Bank = 0;
+        Data.Wallet -= cost;
+        Data.save();
+      } else if (cost > Data2.Bank) {
+        Data2.Bank =0;
+        Data2.Wallet -= cost;
+        Data2.save();
+      }
+    }
 
-    if(!(cost.toLowerCase() === 'all') && isNaN(Converted) === true)  {
+    if(isNaN(Converted) === true)  {
       const wrong = new EmbedBuilder()
       .setColor('Red')
-      .setTitle('<a:wrong:1085174299628929034>丨僅能輸入 `數字` 或者 `all`!')
+      .setTitle('<a:wrong:1085174299628929034>丨僅能輸入 `數字`')
       .setTimestamp()
       return await interaction.reply({embeds: [wrong], ephemeral: true})
     } else {
@@ -74,11 +102,13 @@ export const action = async (interaction) =>{
       new ButtonBuilder()
       .setCustomId('accept')
       .setLabel('同意遊玩')
-      .setStyle(ButtonStyle.Success),
+      .setStyle(ButtonStyle.Success)
+      .setEmoji(`<:xx:1074627080542765116>`),
       new ButtonBuilder()
       .setCustomId('dd')
       .setLabel('拒絕遊玩')
       .setStyle(ButtonStyle.Danger)
+      .setEmoji(`<:X_:1076798408494436403>`)
     );
 
     const eee = new EmbedBuilder()
@@ -165,4 +195,8 @@ export const action = async (interaction) =>{
       .setTimestamp()  
       return await interaction.followUp({embeds: [errorCode]})
   }
+  timeout.push(interaction.user.id);
+  setTimeout(()=> {
+    timeout.shift();
+  },30000)
 }

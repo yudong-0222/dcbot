@@ -14,7 +14,7 @@ const embedss = new EmbedBuilder()
 
 export const command = new SlashCommandBuilder()
 .setName('社會實驗')
-.setDescription('經濟系統-社會實驗-(你有極大的機率輸錢😈)')
+.setDescription('經濟系統-社會實驗(你有極大的機率輸錢😈)')
 
 export const action = async (interaction) =>{
   if (timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [embedss], ephemeral: true})

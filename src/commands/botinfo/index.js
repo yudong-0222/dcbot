@@ -9,8 +9,8 @@ export const action = async (interaction) =>{
   try {
     const appStore = useAppStore()
     const client = appStore.client;
-    const Ver = "`V0.352`";
-    const rank = "`專家II`";
+    const Ver = "`V0.353`";
+    const rank = "`專家I`";
     const author = `<@${interaction.guild.ownerId}>`;
     // const icon = `${client.user.displayAvatarURL()}`
 

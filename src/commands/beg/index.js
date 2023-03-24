@@ -26,7 +26,7 @@ export const action = async (interaction) =>{
 
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
 
-  let negative = Math.round((Math.random()* - 300) - 1000);
+  let negative = Math.round((Math.random()* - 300) - 300);
   let positive = Math.round((Math.random()* 300) + 150);
 
   const posN = [negative, positive];

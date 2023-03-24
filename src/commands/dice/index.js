@@ -38,7 +38,7 @@ export const action = async (interaction) =>{
     let Data = await ecoShema.findOne({Guild: interaction.guild.id, User: interaction.user.id})
     let amount = interaction.options.getString(`點數`);
     const Converted = Number(amount)
-
+    console.log(`First Amount: ${amount}`);
     if(!Data) return await interaction.reply({embeds: [noAccount]})
 
 
@@ -46,22 +46,27 @@ export const action = async (interaction) =>{
     if(amount.startsWith('-')) return interaction.reply({content: `<a:wrong:1085174299628929034>丨不能輸入負數!` ,ephemeral: true})
     if(amount > Data.Wallet && amount > Data.Bank) return await interaction.reply({embeds: [noMoney], ephemeral: true})
     
-    if(!(amount.toLowerCase() === 'all') && isNaN(Converted) === true)  {
-      const wrong = new EmbedBuilder()
-      .setColor('Red')
-      .setTitle('<a:wrong:1085174299628929034>丨僅能輸入 `數字` 或者 `all`!')
-      .setTimestamp()
-      return await interaction.reply({embeds: [wrong], ephemeral: true})
-    } else {
-      if(Data.Wallet <= 0) return await interaction.reply({embeds: [noMoney], ephemeral: true});
+    if(amount.toLowerCase() === 'all'){
       amount = Data.Wallet;
+    } else {
+      amount = interaction.options.getString(`點數`)
+      if(isNaN(Converted) === true){
+        const wrong = new EmbedBuilder()
+        .setColor('Red')
+        .setTitle('<a:wrong:1085174299628929034>丨僅能輸入 `數字` 或者 `all`!')
+        .setTimestamp()
+        return await interaction.reply({embeds: [wrong], ephemeral: true})
+      } 
     }
+
     const appStore = useAppStore()
     const client = appStore.client;
-    const win = Math.round(Math.random()* amount )*2;
+    const win = (amount*2);
     const num = Math.floor(Math.random() * (6-1)) +1;
     const num2 = Math.floor(Math.random() * (6-1)) +1;
     let end = "";
+    console.log(`Second Amount: ${amount}`);
+    console.log(`Wallet: ${Data.Wallet}`);
     if(num > num2) {
       end += `我獲得 ${num2} 點，我輸了😥\n<a:win:1086957903090552923> 你贏了 **${win}** 點`;
       Data.Wallet += win;

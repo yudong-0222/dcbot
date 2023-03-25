@@ -81,6 +81,7 @@ export const action = async (interaction) =>{
     const command = interaction.options.getSubcommand();
     switch(command) {
       case '找工作':
+          if(Data.isWorking) return interaction.reply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法尋找工作! <:jobs:1088446692262674492> \n因為你已經有工作了`, ephemeral: true})
           const selectionRespond = await interaction.reply({embeds: [firstMsg], components: [jobSelect]})
           const collector = await selectionRespond.createMessageComponentCollector({ ComponentType: ComponentType.StringSelect, ComponentType: ComponentType.Button})
           collector.on("collect", async (i)=>{
@@ -114,7 +115,7 @@ export const action = async (interaction) =>{
                       i.reply({embeds: [teacher], ephemeral: true, components: [btn]})
                       collector.on("collect", async (b)=> {
                         if(b.customId === "tea" && b.member.id === user.id) {
-                          if(Data.isWorking) return i.editReply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法尋找工作! <:jobs:1088446692262674492> \n因為你已經有工作了`, ephemeral: true})
+                          if(Data.isWorking) return i.editReply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法做此項工作!\n因為你已經有工作了 <:jobs:1088446692262674492>`, ephemeral: true})
                           Data.isWorking = true;
                           await Data.save();
                           i.editReply({components: [], embeds: [lastMsg]})
@@ -147,6 +148,7 @@ export const action = async (interaction) =>{
                       i.reply({embeds: [teacher], ephemeral: true, components: [btn]})
                       collector.on("collect", async (b)=> {
                         if(b.customId === "fisher" && b.member.id === user.id) {
+                          if(Data.isWorking) return i.editReply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法做此項工作!\n因為你已經有工作了 <:jobs:1088446692262674492>`, ephemeral: true})
                           Data.isWorking = true;
                           await Data.save();
                           i.editReply({components: [], embeds: [lastMsg]})
@@ -180,6 +182,7 @@ export const action = async (interaction) =>{
                       i.reply({embeds: [teacher], ephemeral: true, components: [btn]})
                       collector.on("collect", async (b)=> {
                         if(b.customId === "watcher" && b.member.id === user.id) {
+                          if(Data.isWorking) return i.editReply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法做此項工作!\n因為你已經有工作了 <:jobs:1088446692262674492>`, ephemeral: true})
                           Data.isWorking = true;
                           await Data.save();
                           i.editReply({components: [], embeds: [lastMsg]})
@@ -212,57 +215,75 @@ export const action = async (interaction) =>{
                       i.reply({embeds: [teacher], ephemeral: true, components: [btn]})
                       collector.on("collect", async (b)=> {
                         if(b.customId === "workers" && b.member.id === user.id) {
+                          if(Data.isWorking) return i.editReply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法做此項工作!\n因為你已經有工作了 <:jobs:1088446692262674492>`, ephemeral: true})
                           Data.isWorking = true;
                           await Data.save();
                           i.editReply({components: [], embeds: [lastMsg]})
                         }
                       })
                     } catch (error) {
-                      console.log(`有錯誤!: ${error}`);
+                      return console.log(`有錯誤!: ${error}`);
                     }
                   }
                 
               } 
               
           })
+      }
 
-      case '取消工作':
-        if(Data.isWorking === false){
-          return await interaction.editReply({content: `<a:wrong:1085174299628929034>丨你無法結束工作! <:jobs:1088446692262674492> \n因為你當前沒有工作\n使用 \`/打工 找工作\` 尋找一個工作吧!`, ephemeral: true});
-        }
-        const cacelJob = new EmbedBuilder()
-        .setColor('Red')
-        .setTitle('<:warn:1085138987636752414>丨確定要取消工作嗎')
-        .setDescription("如果你取消工作,那麼你將無法拿到本次的工資\n**不管做多久,沒做完都一樣拿不到**\n\`\`\`\請確認是否要取消?`\`\`") 
-        .setTimestamp()  
-
-        const btn = new ActionRowBuilder()
-        .addComponents(
-          new ButtonBuilder()
-          .setCustomId('yes')
-          .setLabel('是的!我要取消')
-          .setEmoji(`<a:checked:1086296113818128414>`)
-          .setStyle(ButtonStyle.Success)
-        )
-
-        const btn2 = new ActionRowBuilder()
-        .addComponents(
-          new ButtonBuilder()
-          .setCustomId('no')
-          .setLabel('我沒有要取消')
-          .setEmoji(`<a:Animatederror:1086903258993406003>`)
-          .setStyle(ButtonStyle.Danger)
-        )
-
-
-        const cancelMsg = await interaction.reply({embeds: [cacelJob], components:[btn,btn2]})
-        const collect = cancelMsg.createMessageComponentCollector({ComponentType: ComponentType.Button})
-        collect.on("collect", async(i)=> {
-          if(i.customId === 'yes' && i.member.id === user.id) {
+      switch(command) {
+        case '取消工作':
+          if(Data.isWorking === false){
+            return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你目前沒有工作! <:jobs:1088446692262674492> \n使用 \`/打工 找工作\` 尋找一個工作吧!`, ephemeral: true});
           }
-          
-        })
-    }
+          const cacelJob = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<:warn:1085138987636752414>丨確定要取消工作嗎')
+          .setDescription("如果你取消工作,那麼你將無法拿到本次的工資\n**不管做多久,沒做完都一樣拿不到**\n\`\`\`\請確認是否要取消?`\`\`") 
+          .setTimestamp()  
+  
+          const btn = new ActionRowBuilder()
+          .addComponents(
+            new ButtonBuilder()
+            .setCustomId('yes')
+            .setLabel('是的!我要取消')
+            .setEmoji(`<a:checked:1086296113818128414>`)
+            .setStyle(ButtonStyle.Success)
+          )
+  
+          const btn2 = new ActionRowBuilder()
+          .addComponents(
+            new ButtonBuilder()
+            .setCustomId('no')
+            .setLabel('我沒有要取消')
+            .setEmoji(`<a:Animatederror:1086903258993406003>`)
+            .setStyle(ButtonStyle.Danger)
+          )
+  
+  
+          const cancelMsg = await interaction.reply({embeds: [cacelJob], components:[btn,btn2], ephemeral: true})
+          const collect = cancelMsg.createMessageComponentCollector({ComponentType: ComponentType.Button})
+          collect.on("collect", async(i)=> {
+            if(i.customId === 'yes' && i.member.id === user.id) {
+              const yesIdo = new EmbedBuilder()
+              .setColor('Green')
+              .setTitle('<a:pinkcheckmark:1084383521155592212>丨你結束了你的工作')
+              .setDescription(`因為提早結束,所以你沒有拿到任何工資 <a:moneyanimated:1089137556496584805>`)
+              .setTimestamp()  
+              interaction.editReply({embeds: [yesIdo], components: [], ephemeral: true})
+              Data.isWorking = false;
+              await Data.save();
+            }
+            if (i.customId === 'no' && i.member.id === user.id) {
+              const noIdont = new EmbedBuilder()
+              .setColor('Red')
+              .setTitle('<a:checkpurple:1089136864168001556>丨你保留了你的工作')
+              .setTimestamp()  
+              return interaction.editReply({embeds: [noIdont], components: [], ephemeral: true})
+            }
+          })
+      }
+      
     
     
   } catch (error) {

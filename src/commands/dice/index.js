@@ -43,7 +43,7 @@ export const action = async (interaction) =>{
 
     if (timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [embedss], ephemeral: true})
     if(amount.startsWith('-')) return interaction.reply({content: `<a:wrong:1085174299628929034>丨不能輸入負數!` ,ephemeral: true})
-    if(amount > Data.Wallet && amount > Data.Bank) return await interaction.reply({embeds: [noMoney], ephemeral: true})
+    if(amount > Data.Wallet) return await interaction.reply({embeds: [noMoney], ephemeral: true})
     
     if(amount.toLowerCase() === 'all'){
       amount = Data.Wallet;

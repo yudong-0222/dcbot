@@ -65,7 +65,7 @@ export const action = async (interaction) =>{
     const num = Math.floor(Math.random() * (6-1)) +1;
     const num2 = Math.floor(Math.random() * (6-1)) +1;
     const win = (amount*2);
-    const lose = Math.round(amount/2);
+    const lose = Math.round(amount*0.8);
     let end = "";
     if(num > num2) {
       end += `我獲得 ${num2} 點，我輸了😥\n<a:win:1086957903090552923> 你贏了 **${win}** 點社會信用`;

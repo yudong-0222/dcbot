@@ -73,7 +73,7 @@ export const action = async (interaction) =>{
       await Data.save();
     } else if(num < num2) {
       end += `我獲得 ${num2} 點，我贏了😁\n<a:lose:1086958360705892522> 你輸了 **${lose}** 點社會信用`
-      if (Data.Wallet+Data.Bank < win) {
+      if (Data.Wallet+Data.Bank < lose) {
         Data.Wallet = 0;
         await Data.save();
       } else {

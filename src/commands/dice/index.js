@@ -37,6 +37,7 @@ export const action = async (interaction) =>{
   try {
     let Data = await ecoShema.findOne({Guild: interaction.guild.id, User: interaction.user.id})
     let amount = interaction.options.getString(`點數`);
+    if (amount === '0') return await interaction.reply({content: `> <a:wrong:1085174299628929034> | 數量必須必須大於0!`, ephemeral: true})
     const Converted = Number(amount)
     if(!Data) return await interaction.reply({embeds: [noAccount]})
 
@@ -46,6 +47,7 @@ export const action = async (interaction) =>{
     if(amount > Data.Wallet) return await interaction.reply({embeds: [noMoney], ephemeral: true})
     
     if(amount.toLowerCase() === 'all'){
+      if (Data.Wallet <= 0) return await interaction.reply({embeds: [noMoney], ephemeral: true})
       amount = Data.Wallet;
     } else {
       amount = interaction.options.getString(`點數`)
@@ -60,25 +62,26 @@ export const action = async (interaction) =>{
 
     const appStore = useAppStore()
     const client = appStore.client;
-    const win = (amount*2);
     const num = Math.floor(Math.random() * (6-1)) +1;
     const num2 = Math.floor(Math.random() * (6-1)) +1;
+    const win = (amount*2);
+    const lose = Math.round(amount/2);
     let end = "";
     if(num > num2) {
-      end += `我獲得 ${num2} 點，我輸了😥\n<a:win:1086957903090552923> 你贏了 **${win}** 點`;
+      end += `我獲得 ${num2} 點，我輸了😥\n<a:win:1086957903090552923> 你贏了 **${win}** 點社會信用`;
       Data.Wallet += win;
       await Data.save();
     } else if(num < num2) {
-      end += `我獲得 ${num2} 點，我贏了😁\n<a:lose:1086958360705892522> 你輸了 **${win}** 點`
+      end += `我獲得 ${num2} 點，我贏了😁\n<a:lose:1086958360705892522> 你輸了 **${lose}** 點社會信用`
       if (Data.Wallet+Data.Bank < win) {
         Data.Wallet = 0;
         await Data.save();
       } else {
-        Data.Wallet -= win;
+        Data.Wallet -= lose;
         await Data.save();
       }
     } else {
-      end += `我獲得 ${num2} 點，我們平手😘\n你獲得了 1 點`
+      end += `我獲得 ${num2} 點，我們平手😘\n你獲得了 1 點社會信用`
       Data.Wallet += 1;
       await Data.save();
     }

@@ -33,7 +33,7 @@ export const action = async (interaction) => {
     if(DataUser.Wallet <= 0) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法搶劫他 <a:bunbun:991105824170713088>\n**他身上沒有錢QQ**`, ephemeral: true});
 
     let negative = Math.round((Math.random()* -800) -10);
-    let positive = Math.round((Math.random()* 500)+ 10);
+    let positive = Math.round((Math.random()* 500)*0.35 + 10);
 
     const posN = [negative, positive];
 

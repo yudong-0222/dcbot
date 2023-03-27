@@ -78,6 +78,7 @@ export const action = async (interaction) =>{
           Bank: 0,
           Wallet: 1000,
           lastDaily: new Date(Date.now() - oneDayMs),
+          isWorking: false,
         })
         await Data.save();
         await i.update({embeds: [embed2], components: [] })

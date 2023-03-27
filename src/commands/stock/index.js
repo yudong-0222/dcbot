@@ -12,15 +12,16 @@ export const action = async (interaction) =>{
     const wait = require('node:timers/promises').setTimeout;
     const appStore = useAppStore()
     const client = appStore.client;
-    const aa = await interaction.reply({ content: '<a:load:1084371236836081674> 正在取得股票資訊...'});
-    await wait(5000);
-    await interaction.deleteReply();
     const e = new EmbedBuilder()
     .setColor('Red')
     .setTitle('<a:wrong:1085174299628929034>丨股票系統尚未啟用')
     .setFooter({text: `來自 ${interaction.user.username} 的請求`})
     .setTimestamp()
-    await interaction.followUp({embeds: [e], ephemeral: true});
+
+    interaction.reply({ content: '<a:load:1084371236836081674> 正在取得股票資訊...'});
+    await wait(5000);
+    // await interaction.followUp({embeds: [e], ephemeral: true});
+    interaction.editReply({embeds: [e], ephemeral: true, content: ` `,});
     } catch (error) {
       console.log(`/股票 有錯誤: ${error}`);
       const stockError = new EmbedBuilder()

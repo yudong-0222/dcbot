@@ -5,6 +5,7 @@ let ecoSchema = new Schema({
   User: String,
   Bank: Number,
   Wallet: Number,
-  lastDaily: Date
+  lastDaily: Date,
+  isWorking: Boolean
 })
 export default model('ecoSchema', ecoSchema);

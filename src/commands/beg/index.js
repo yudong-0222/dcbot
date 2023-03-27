@@ -10,31 +10,42 @@ const embedss = new EmbedBuilder()
 	.setDescription('你執行指令的速度太快了!')
 	.setTimestamp()
 
-
-
 export const command = new SlashCommandBuilder()
 .setName('社會實驗')
 .setDescription('經濟系統-社會實驗(你有極大的機率輸錢😈)')
 
 export const action = async (interaction) =>{
   if (timeout.includes(interaction.user.id)) return await interaction.reply({embeds: [embedss], ephemeral: true})
+  let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
+  if(!Data) {
+    const noAccount = new EmbedBuilder()
+    .setColor('Red')
+    .setTitle(`<a:Animatederror:1086903258993406003>丨你無法參與社會實驗`)
+    .setDescription(`因為你沒有帳戶!\n\`/帳戶\`創建一個帳戶!`)
+    return await interaction.reply({embeds: [noAccount], ephemeral: true});
+  }
 
+  await interaction.deferReply();
   const appStore = useAppStore()
   const client = appStore.client;
 
   const {user, guild} = interaction;
 
-  let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
-
-  let negative = Math.round((Math.random()* - 300) - 300);
-  let positive = Math.round((Math.random()* 300) + 150);
+  let negative = Math.round((Math.random() * -300) - 15);
+  let positive = Math.round((Math.random() * 300) + 10);
 
   const posN = [negative, positive];
   const amount = Math.round((Math.random() * posN.length))
   const value= posN[amount]
 
-  if(!value) return await interaction.reply({content: `你甚麼都沒拿到 :D`, ephemeral: true})
+  if(!value) {
+    const notValue = new EmbedBuilder()
+    .setColor('Red')
+    .setTitle('社會實驗')
+    .addFields({name: "實驗結果", value:`你甚麼都沒拿到`})
 
+    return interaction.editReply({embeds: [notValue], ephemeral: true})
+  }
   if(Data) {
     Data.Wallet += value;
     await Data.save();
@@ -51,7 +62,8 @@ export const action = async (interaction) =>{
       "自然組獎勵:",
       "你忘了給飛機加油了，助攻得到",
       "在大樓裡連到飛機網路，今天還是911\n阿拉伯合作夥伴獲得:",
-      "你大便大到腳麻，點數獲得"
+      "你大便大到腳麻，點數獲得",
+      "你夢到了周公 你與周公下棋贏得點數",
     ]
 
     const posName = Math.round(Math.random() * positiveChoices.length);
@@ -60,7 +72,7 @@ export const action = async (interaction) =>{
     .setTitle(`社會實驗`)
     .addFields({name: '實驗結果', value: `${positiveChoices[[posName]]} $${value}`})
 
-    await interaction.reply({embeds: [embed1]});
+    await interaction.editReply({embeds: [embed1]});
   } else {
     const negativeChoices = [
       "天上掉下來一捆錢，你收起來但被扣除了",
@@ -76,7 +88,8 @@ export const action = async (interaction) =>{
       "Discord 發現你有異狀行為，所以收走了你的點數共",
       "在同學大便的時候大喊:**多吃菜喔**,因此被清算，點數被沖走",
       "一切都往好的方向發展。但你被扣除",
-      "指令魔杖發現你有極大的才華，所以你的點數被魔杖吃掉了"
+      "指令魔杖發現你有極大的才華，所以你的點數被魔杖吃掉了",
+      "你沒有使用surfshark VPN 點數扣除",
     ]
 
     const negName = Math.round((Math.random() * negativeChoices.length));
@@ -89,12 +102,11 @@ export const action = async (interaction) =>{
     .setTitle('社會實驗')
     .addFields({name: "實驗結果", value:`${negativeChoices[[negName]]} $${nonSymbol}`})
 
-    await interaction.reply({embeds: [embed2]});
+    await interaction.editReply({embeds: [embed2]});
   }
   
   timeout.push(interaction.user.id);
   setTimeout(()=> {
     timeout.shift();
-  },5000)
-
+  },3000)
 }

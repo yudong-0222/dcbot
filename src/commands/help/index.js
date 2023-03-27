@@ -7,54 +7,8 @@ const client = appStore.client;
 export const command = new SlashCommandBuilder()
 .setName('幫助')
 .setDescription('機器人的簡單指引🎁')
+const action = async (interaction) =>{
 
-export const action = async (interaction) =>{
-
-  const sel = new ActionRowBuilder()
-			.addComponents(
-				new StringSelectMenuBuilder()
-					.setCustomId('a')
-          .setMaxValues(1)
-					.setPlaceholder('📃 選擇一個指令')
-					.addOptions(
-						{
-							label: '📶 延遲',
-							description: '取得我的延遲!',
-							value: '1',
-						},
-						{
-							label: '🐄 牛',
-							description: '牛。我還沒想到要怎麼寫這xDD',
-							value: '2',
-						},
-            {
-							label: '📄 伺服器資訊',
-							description: '取得伺服器的資訊',
-							value: '3',
-						},
-            {
-							label: '🤖 機器人資訊',
-							description: '關於機器人的資訊。',
-							value: '4',
-						},
-            {
-							label: '😎 使用者資訊',
-							description: '關於使用者的資訊',
-							value: '5',
-						},
-            {
-							label: '🎲 骰子遊戲',
-							description: '扔骰子，比大小!',
-							value: '6',
-						},
-            {
-							label: '🤗 幫助',
-							description: '你現在正在使用這個',
-							value: '7',
-						},
-					),
-			);
-    
     const Help = new EmbedBuilder()
     .setColor("#939787")
     .setTitle(`${client.user.username}`)

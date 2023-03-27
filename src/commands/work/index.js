@@ -99,8 +99,8 @@ export const action = async (interaction) =>{
     const command = interaction.options.getSubcommand();
     switch(command) {
       case '找工作':
-          if(Data.isWorking) return interaction.reply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法尋找工作! <:jobs:1088446692262674492> \n因為你已經有工作了\n> 你的工作是: \`${workla.Work}\``, ephemeral: true})
-          const selectionRespond = await interaction.reply({embeds: [firstMsg], components: [jobSelect]})
+          if(Data.isWorking === true) return await interaction.reply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法尋找工作! <:jobs:1088446692262674492> \n因為你已經有工作了\n> 你的工作是: \`${workla.Work}\``, ephemeral: true})
+          const selectionRespond = await interaction.editReply({embeds: [firstMsg], components: [jobSelect]})
           const collector = await selectionRespond.createMessageComponentCollector({ ComponentType: ComponentType.StringSelect, ComponentType: ComponentType.Button})
           collector.on("collect", async (i)=>{
               if (i.customId === "job-menu" && user.id === i.member.id) {
@@ -314,35 +314,36 @@ export const action = async (interaction) =>{
     }
 
     switch(command) {
+
       case "開課":
+        if (Data.isWorking=== false) {
+          const noJobs = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:Animatederror:1086903258993406003>丨你無法使用!')
+          .setDescription("原因:\n因為你當前沒有工作\n`/打工` 來尋找一份打工") 
+          .setTimestamp()
+          return await interaction.reply({embeds: [noJobs]});
+        }
         if (cooldowns.has(user)) {
           const cooldownEnd = cooldowns.get(user) + cooldownSeconds * 1000;
           const secondLeft = Math.round((cooldownEnd - now) / 1000 );
           
             if (0 < cooldownEnd) {
                   const min = Math.floor(secondLeft / 60);
+                  const sec = Math.floor(secondLeft % 60);
                   const embed = new EmbedBuilder()
                   .setColor('Red')
                   .setTitle(`<a:Animatederror:1086903258993406003>|工作尚未結束!`)
-                  .setDescription(`你還需要等\`${min}\`分 \`${secondLeft}\` 秒\n才能再次使用!`)
+                  .setDescription(`你還需要等\`${min}\`分 \`${sec}\` 秒\n才能再次使用!`)
 
                   return await interaction.reply({embeds: [embed]})
             }
           }
-        }
-        const cooldownExpiration = Date.now() + (cooldownSeconds * 1000);
-        cooldowns.set(user, cooldownExpiration);
+        
+        cooldowns.set(user, now);
         
 
         await interaction.deferReply({ephemeral: false});
-        if (!Data.isWorking) {
-          const noJobs = new EmbedBuilder()
-          .setColor('Red')
-          .setTitle('<a:Animatederror:1086903258993406003>丨你無法使用!')
-          .setDescription("原因:\n因為你當前沒有工作\n`/打工` 來尋找一份打工") 
-          .setTimestamp()
-          return await interaction.editReply({embeds: [noJobs]});
-        }
         if (!(workla.Work === "老師")) {
           const notThisJob = new EmbedBuilder()
           .setColor('Red')
@@ -350,7 +351,7 @@ export const action = async (interaction) =>{
           .setDescription("原因:\n因為你不是 **老師**\n`/打工` 來尋找一份打工") 
           .setTimestamp()
 
-          return interaction.editReply({embeds: [notThisJob]})
+          return await interaction.editReply({embeds: [notThisJob]})
         } 
         let pay = Math.round(Math.random() * 33 ) + 120;
         if (pay >= 150) pay = 150;
@@ -373,7 +374,7 @@ export const action = async (interaction) =>{
         }, 5 * 60 * 1000)
 
         await interaction.editReply({embeds: [lastMessage], components: []});
-      
+    }
   } catch (error) {
     console.log(`/打工 有錯誤: ${error}`);
     const errorCode = new EmbedBuilder()

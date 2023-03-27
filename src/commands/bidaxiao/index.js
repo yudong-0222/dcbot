@@ -53,9 +53,9 @@ export const action = async (interaction) =>{
     let Data2 = await ecoSchema.findOne({Guild: interaction.guild.id, User: ememy.id});
     if(ememy.id === user.id) return await interaction.reply({content: '<a:Animatederror:1086903258993406003>丨你不能和自己遊玩', ephemeral: true})
     if(!Data || !Data2) return await interaction.reply({embeds: [noAccount]});
-  
-    const num1 = Math.round(Math.random()* 100)+1;
-    const num2 = Math.round(Math.random()* 100)+1;
+    
+    const num1 = Math.round(Math.random()* 100);
+    const num2 = Math.round(Math.random()* 100);
     const money = Math.round(Math.random() *10) + cost*2;
 
     if (cost.startsWith('-')) return interaction.reply({content: `<a:wrong:1085174299628929034>丨不能輸入負數!` ,ephemeral: true}) 
@@ -134,8 +134,7 @@ export const action = async (interaction) =>{
               .setTitle('<:diamond:990508369049686066>丨遊戲結果')
               .setDescription(`<@${user.id}> 的數字: ${num1}\n<@${ememy.id}> 的數字: ${num2}`)
               .addFields({ name: '<a:Snowsgiving22_AnimatedEmojis_mal:1084361545947021373> 比對結果', value: `<@${user.id}> 獲勝\n獲得 ${money} 點`, inline: true })
-              .setTimestamp()
-          interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...`, embeds:[],components: []}).then(()=>{
+              interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...\nhttps://tenor.com/view/numbers-crunching-gif-12718539`, embeds:[],components: []}).then(()=>{
             setTimeout(function() {
               interaction.editReply({content:" ", embeds: [result], components:[]});
             }, 3000);
@@ -159,10 +158,10 @@ export const action = async (interaction) =>{
               .setDescription(`<@${user.id}> 的數字: ${num1}\n<@${ememy.id}> 的數字: ${num2}`)
               .addFields({ name: '<a:Snowsgiving22_AnimatedEmojis_mal:1084361545947021373> 比對結果', value: `<@${ememy.id}> 獲勝\n獲得 ${money} 點`, inline: true })
               .setTimestamp()
-          interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...`, embeds:[],components: []}).then(()=>{
+          interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...\nhttps://tenor.com/view/numbers-crunching-gif-12718539`, embeds:[],components: []}).then(()=>{
             setTimeout(function() {
               interaction.editReply({content:" ", embeds: [result], components:[]});
-            }, 3000);
+            }, 5000);
           });
           if (money > Data.Wallet+Data.Bank) {
             Data.Wallet = 0;
@@ -183,7 +182,7 @@ export const action = async (interaction) =>{
               .setDescription(`<@${user.id}> 的數字: ${num1}\n<@${ememy.id}> 的數字: ${num2}`)
               .addFields({ name: '<a:Snowsgiving22_AnimatedEmojis_mal:1084361545947021373> 比對結果', value: `**雙方平手**\n各獲得 1 點`, inline: true })
               .setTimestamp()
-          interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...`, embeds:[],components: []}).then(()=>{
+              interaction.editReply({content: `<a:loading:1084371030774120549> 正在進行比對...\nhttps://tenor.com/view/numbers-crunching-gif-12718539`, embeds:[],components: []}).then(()=>{
             setTimeout(function() {
               interaction.editReply({content:" ", embeds: [result], components:[]});
             }, 3000);

@@ -297,12 +297,12 @@ export const action = async (interaction) =>{
             .setTitle('<a:pinkcheckmark:1084383521155592212>丨你結束了你的工作')
             .setDescription(`因為提早結束,所以你沒有拿到任何工資 <a:moneyanimated:1089137556496584805>`)
             .setTimestamp()  
-            await interaction.editReply({embeds: [yesIdo], components: [], ephemeral: true})
             Data.isWorking = false;
             await Data.save();
             workla.Work = "";
             await workla.save();
-            console.log(`${Data.isWorking} 公厝狀態`);
+            console.log(`取消工作: ${Data.isWorking}`);
+            return await interaction.editReply({embeds: [yesIdo], components: [], ephemeral: true})
           }
           if (i.customId === 'no' && i.member.id === user.id) {
             const noIdont = new EmbedBuilder()
@@ -340,10 +340,7 @@ export const action = async (interaction) =>{
                   return await interaction.reply({embeds: [embed]})
             }
           }
-        
         cooldowns.set(user, now);
-        
-
         await interaction.deferReply({ephemeral: false});
         if (!(workla.Work === "老師")) {
           const notThisJob = new EmbedBuilder()
@@ -369,16 +366,7 @@ export const action = async (interaction) =>{
         .setTitle(`👨‍🏫 | 名師開課 <a:green_tick:994529015652163614>`)
         .setDescription(`${doThings[[doThingN]]} $${pay}`);
         await interaction.editReply({embeds: [lastMessage], components: []});
-          setTimeout(async() => {
-            if (Data.isWorking === true) {
-              Data.Bank += pay;
-              await Data.save();
-              console.log("send monety");
-            } else {
-              return;
-            }
-          },  10 * 1000)
-
+        
     }
 
     /**/

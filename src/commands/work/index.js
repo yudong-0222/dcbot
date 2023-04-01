@@ -100,7 +100,7 @@ export const action = async (interaction) =>{
     switch(command) {
       case '找工作':
           if(Data.isWorking === true) return await interaction.reply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法尋找工作! <:jobs:1088446692262674492> \n因為你已經有工作了\n> 你的工作是: \`${workla.Work}\``, ephemeral: true})
-          const selectionRespond = await interaction.editReply({embeds: [firstMsg], components: [jobSelect]})
+          const selectionRespond = await interaction.reply({embeds: [firstMsg], components: [jobSelect]})
           const collector = await selectionRespond.createMessageComponentCollector({ ComponentType: ComponentType.StringSelect, ComponentType: ComponentType.Button})
           collector.on("collect", async (i)=>{
               if (i.customId === "job-menu" && user.id === i.member.id) {
@@ -297,11 +297,12 @@ export const action = async (interaction) =>{
             .setTitle('<a:pinkcheckmark:1084383521155592212>丨你結束了你的工作')
             .setDescription(`因為提早結束,所以你沒有拿到任何工資 <a:moneyanimated:1089137556496584805>`)
             .setTimestamp()  
-            interaction.editReply({embeds: [yesIdo], components: [], ephemeral: true})
+            await interaction.editReply({embeds: [yesIdo], components: [], ephemeral: true})
             Data.isWorking = false;
             await Data.save();
             workla.Work = "";
             await workla.save();
+            console.log(`${Data.isWorking} 公厝狀態`);
           }
           if (i.customId === 'no' && i.member.id === user.id) {
             const noIdont = new EmbedBuilder()
@@ -313,8 +314,8 @@ export const action = async (interaction) =>{
         })
     }
 
+    /*開課*/
     switch(command) {
-
       case "開課":
         if (Data.isWorking=== false) {
           const noJobs = new EmbedBuilder()
@@ -367,14 +368,20 @@ export const action = async (interaction) =>{
         .setColor('Green')
         .setTitle(`👨‍🏫 | 名師開課 <a:green_tick:994529015652163614>`)
         .setDescription(`${doThings[[doThingN]]} $${pay}`);
-        
-        setTimeout(async() => {
-          Data.Bank += pay;
-          await Data.save();
-        }, 5 * 60 * 1000)
-
         await interaction.editReply({embeds: [lastMessage], components: []});
+          setTimeout(async() => {
+            if (Data.isWorking === true) {
+              Data.Bank += pay;
+              await Data.save();
+              console.log("send monety");
+            } else {
+              return;
+            }
+          },  10 * 1000)
+
     }
+
+    /**/
   } catch (error) {
     console.log(`/打工 有錯誤: ${error}`);
     const errorCode = new EmbedBuilder()

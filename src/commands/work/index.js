@@ -32,7 +32,7 @@ export const action = async (interaction) =>{
     const client = appStore.client;
     const {user} = interaction
     const now = Date.now();
-    const cooldownSeconds = 10;
+    const cooldownSeconds = 300;
     let timerId;
 
     let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
@@ -384,7 +384,7 @@ export const action = async (interaction) =>{
               console.log('cancelled ler');
               return;
             }
-          }, 10 * 1000)
+          }, 30 * 60 * 1000)
         }
       }
     /**/

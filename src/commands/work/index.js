@@ -32,6 +32,7 @@ export const action = async (interaction) =>{
     const {user} = interaction
     const now = Date.now();
     const cooldownSeconds = 300;
+    let timerId;
 
     let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
     if(!Data) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法進行打工 <:jobs:1088446692262674492> \n因為你沒有帳戶`, ephemeral: true});
@@ -301,6 +302,7 @@ export const action = async (interaction) =>{
             await Data.save();
             workla.Work = "";
             await workla.save();
+            if (timerId) clearTimeout(timerId);
             console.log(`取消工作: ${Data.isWorking}`);
             return await interaction.editReply({embeds: [yesIdo], components: [], ephemeral: true})
           }
@@ -328,7 +330,6 @@ export const action = async (interaction) =>{
         if (cooldowns.has(user)) {
           const cooldownEnd = cooldowns.get(user) + cooldownSeconds * 1000;
           const secondLeft = Math.round((cooldownEnd - now) / 1000 );
-          
             if (0 < cooldownEnd) {
                   const min = Math.floor(secondLeft / 60);
                   const sec = Math.floor(secondLeft % 60);
@@ -341,7 +342,6 @@ export const action = async (interaction) =>{
             }
           }
         cooldowns.set(user, now);
-        await interaction.deferReply({ephemeral: false});
         if (!(workla.Work === "老師")) {
           const notThisJob = new EmbedBuilder()
           .setColor('Red')
@@ -365,10 +365,16 @@ export const action = async (interaction) =>{
         .setColor('Green')
         .setTitle(`👨‍🏫 | 名師開課 <a:green_tick:994529015652163614>`)
         .setDescription(`${doThings[[doThingN]]} $${pay}`);
-        await interaction.editReply({embeds: [lastMessage], components: []});
-        
-    }
-
+        await interaction.reply({embeds: [lastMessage], components: []});
+        if (Data.isWorking && timerId) {
+          clearTimeout(timerId);
+          timerId = setTimeout(async()=>{
+              Data.Bank += pay;
+              await Data.save();
+              console.log(`Sent Money ler`);
+            },10*1000)
+        }
+      }
     /**/
   } catch (error) {
     console.log(`/打工 有錯誤: ${error}`);

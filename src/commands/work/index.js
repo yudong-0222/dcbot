@@ -374,14 +374,11 @@ export const action = async (interaction) =>{
           clearTimeout(timerId)
           timerId = setTimeout(async()=>{
             if (!isCancel) {
-              console.log(`近來373行: ${isCancel}`);
               Data.Bank += pay;
               await Data.save();
-              console.log(`Sent Money ler`);
             } else {
               clearTimeout(timerId)
               timerId = null;
-              console.log('cancelled ler');
               return;
             }
           }, 30 * 60 * 1000)

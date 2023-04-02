@@ -5,6 +5,7 @@ import { StringSelectMenuBuilder } from '@discordjs/builders'
 import workSchema from '../../Schemas/workSchema'
 
 const cooldowns = new Map();
+let isCancel = false;
 
 export const command = new SlashCommandBuilder()
 .setName('job')
@@ -31,7 +32,7 @@ export const action = async (interaction) =>{
     const client = appStore.client;
     const {user} = interaction
     const now = Date.now();
-    const cooldownSeconds = 300;
+    const cooldownSeconds = 10;
     let timerId;
 
     let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
@@ -264,6 +265,7 @@ export const action = async (interaction) =>{
         if(Data.isWorking === false){
           return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你目前沒有工作! <:jobs:1088446692262674492> \n使用 \`/打工 找工作\` 尋找一個工作吧!`, ephemeral: true});
         }
+        isCancel = true;
         const cacelJob = new EmbedBuilder()
         .setColor('Red')
         .setTitle('<:warn:1085138987636752414>丨確定要取消工作嗎')
@@ -287,33 +289,35 @@ export const action = async (interaction) =>{
           .setEmoji(`<a:Animatederror:1086903258993406003>`)
           .setStyle(ButtonStyle.Danger)
         )
-
-
-        const cancelMsg = await interaction.reply({embeds: [cacelJob], components:[btn,btn2], ephemeral: true})
-        const collect = cancelMsg.createMessageComponentCollector({ComponentType: ComponentType.Button})
-        collect.on("collect", async(i)=> {
-          if(i.customId === 'yes' && i.member.id === user.id) {
-            const yesIdo = new EmbedBuilder()
-            .setColor('Green')
-            .setTitle('<a:pinkcheckmark:1084383521155592212>丨你結束了你的工作')
-            .setDescription(`因為提早結束,所以你沒有拿到任何工資 <a:moneyanimated:1089137556496584805>`)
-            .setTimestamp()  
-            Data.isWorking = false;
-            await Data.save();
-            workla.Work = "";
-            await workla.save();
-            if (timerId) clearTimeout(timerId);
-            console.log(`取消工作: ${Data.isWorking}`);
-            return await interaction.editReply({embeds: [yesIdo], components: [], ephemeral: true})
-          }
-          if (i.customId === 'no' && i.member.id === user.id) {
-            const noIdont = new EmbedBuilder()
-            .setColor('Red')
-            .setTitle('<a:checkpurple:1089136864168001556>丨你保留了你的工作')
-            .setTimestamp()  
-            return interaction.editReply({embeds: [noIdont], components: [], ephemeral: true})
-          }
-        })
+        
+        if (cooldownSeconds > 0) {
+          const cancelMsg = await interaction.reply({embeds: [cacelJob], components:[btn,btn2], ephemeral: true})
+          const collect = cancelMsg.createMessageComponentCollector({ComponentType: ComponentType.Button})
+          collect.on("collect", async(i)=> {
+            if(i.customId === 'yes' && i.member.id === user.id) {
+              const yesIdo = new EmbedBuilder()
+              .setColor('Green')
+              .setTitle('<a:pinkcheckmark:1084383521155592212>丨你結束了你的工作')
+              .setDescription(`因為提早結束,所以你沒有拿到任何工資 <a:moneyanimated:1089137556496584805>`)
+              .setTimestamp()  
+              Data.isWorking = false;
+              await Data.save();
+              workla.Work = "";
+              await workla.save();
+              if (timerId) clearTimeout(timerId)
+              timerId = null;
+              console.log(`取消工作: ${Data.isWorking}`);
+              return await interaction.editReply({embeds: [yesIdo], components: [], ephemeral: true})
+            }
+            if (i.customId === 'no' && i.member.id === user.id) {
+              const noIdont = new EmbedBuilder()
+              .setColor('Red')
+              .setTitle('<a:checkpurple:1089136864168001556>丨你保留了你的工作')
+              .setTimestamp()  
+              return interaction.editReply({embeds: [noIdont], components: [], ephemeral: true})
+            }
+          })
+        }
     }
 
     /*開課*/
@@ -329,8 +333,8 @@ export const action = async (interaction) =>{
         }
         if (cooldowns.has(user)) {
           const cooldownEnd = cooldowns.get(user) + cooldownSeconds * 1000;
-          const secondLeft = Math.round((cooldownEnd - now) / 1000 );
-            if (0 < cooldownEnd) {
+          const secondLeft = Math.floor((cooldownEnd - now) / 1000, 0);
+            if (0 < secondLeft) { 
                   const min = Math.floor(secondLeft / 60);
                   const sec = Math.floor(secondLeft % 60);
                   const embed = new EmbedBuilder()
@@ -338,10 +342,10 @@ export const action = async (interaction) =>{
                   .setTitle(`<a:Animatederror:1086903258993406003>|工作尚未結束!`)
                   .setDescription(`你還需要等\`${min}\`分 \`${sec}\` 秒\n才能再次使用!`)
 
-                  return await interaction.reply({embeds: [embed]})
+                  return interaction.reply({embeds: [embed]})
             }
           }
-        cooldowns.set(user, now);
+        cooldowns.set(user, now);//
         if (!(workla.Work === "老師")) {
           const notThisJob = new EmbedBuilder()
           .setColor('Red')
@@ -366,13 +370,21 @@ export const action = async (interaction) =>{
         .setTitle(`👨‍🏫 | 名師開課 <a:green_tick:994529015652163614>`)
         .setDescription(`${doThings[[doThingN]]} $${pay}`);
         await interaction.reply({embeds: [lastMessage], components: []});
-        if (Data.isWorking && timerId) {
-          clearTimeout(timerId);
+        if (!isCancel) {
+          clearTimeout(timerId)
           timerId = setTimeout(async()=>{
+            if (!isCancel) {
+              console.log(`近來373行: ${isCancel}`);
               Data.Bank += pay;
               await Data.save();
               console.log(`Sent Money ler`);
-            },10*1000)
+            } else {
+              clearTimeout(timerId)
+              timerId = null;
+              console.log('cancelled ler');
+              return;
+            }
+          }, 10 * 1000)
         }
       }
     /**/

@@ -6,9 +6,16 @@ import workSchema from '../../Schemas/workSchema'
 import { queuePostFlushCb } from 'vue'
 
 const cooldowns = new Map();
+const banzhuangCooldown = new Map();
 let isCancel = false;
 let bait = 20; //魚餌
+let wailao = 3; //外籍看護的體力
+let banzhuang = 10; //磚頭數量 可改
+const DefaultBanzhuang = 10; // 總磚頭數量
 let baitRestoreTimer = null;
+let wailaoRestoreTimer = null;
+
+
 
 
 export const command = new SlashCommandBuilder()
@@ -37,8 +44,20 @@ export const command = new SlashCommandBuilder()
 .addSubcommand(cmd=>
   cmd
   .setName('照護')
-  .setDescription('外勞工作! 瑪麗亞!')
+  .setDescription('外籍看護工作! 單次工作最高可達250點!')
   )
+.addSubcommand(cmd=>
+  cmd
+  .setName('搬磚')
+  .setDescription('工地人的工作!')
+  )
+.addSubcommand(cmd=>
+  cmd
+  .setName('搬磚結束')
+  .setDescription('結算當前的搬磚!必須是工地人才能使用的')
+  )
+
+
 export const action = async (interaction) =>{
   try {
     const appStore = useAppStore()
@@ -47,7 +66,6 @@ export const action = async (interaction) =>{
     const now = Date.now();
     const cooldownSeconds = 300;
     let timerId;
-
 
     let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
     if(!Data) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法進行打工 <:jobs:1088446692262674492> \n因為你沒有帳戶`, ephemeral: true});
@@ -95,7 +113,7 @@ export const action = async (interaction) =>{
     const firstMsg = new EmbedBuilder()
       .setColor('Random')
       .setTitle('<:jobs:1088446692262674492>丨工作列表')
-      .setDescription("📄 請查看以下資訊") 
+      .setDescription("📄 請使用下列選單選擇一項工作")
       .setTimestamp()
 
     const jobSelect = new ActionRowBuilder()
@@ -135,7 +153,7 @@ export const action = async (interaction) =>{
                     .setDescription("📄 請查看以下資訊") 
                     .addFields({
                       name:`工作名稱 - ${i.values}`,
-                      value: '(暫定) 老師\n開課 由群組人員進來聽課數量為主\n 越多人錢越多\n工作時間5分鐘'
+                      value: '使用 \`/打工 開課\` 進行授課\n工作時間5分鐘\n工資將在5分鐘後給予\n<:agy:1087683155135320064>如果中途中斷,則拿不到工資'
                     })
                     .setTimestamp()
                     try {
@@ -170,7 +188,7 @@ export const action = async (interaction) =>{
                     .setDescription("📄 請查看以下資訊") 
                     .addFields({
                       name:`工作名稱 - ${i.values}`,
-                      value: '(暫定) 釣魚\n以~~圖表~~方式來釣魚\n每釣到一隻增加50點\n工作時間最多15分鐘\n即停止\b**5分鐘後才可進行下次釣魚工作**'
+                      value: '使用 \`/打工 捕魚\` 進行捕魚\n每捕到一隻可以獲利50點\n魚餌20隻\n每五分鐘恢復一隻\n或者至商店購買'
                     })
                     .setTimestamp()
                     try {
@@ -206,8 +224,7 @@ export const action = async (interaction) =>{
                     .setDescription("📄 請查看以下資訊") 
                     .addFields({
                       name:`工作名稱 - ${i.values}`,
-                      value: '(暫定)照顧雇主\n滿足雇主一個需求\n由Dc內完成\n完成後雇主需給看護一筆金額 >200點\n若雇主給予<200\n系統由雇主存款裡扣除>1000 的數量給予受雇者'
-                    })
+                      value: '使用 \`/打工 照護\` 進行工作\n總體力值: `3` \n每工作一次體力值-1 直到=0\n每 `10` 分鐘恢復`1體力值`\n薪資範圍: `10點 ~ 250點`\n不會有沒拿到薪資的問題'})
                     .setTimestamp()
                     try {
                         const btn = new ActionRowBuilder()
@@ -241,9 +258,8 @@ export const action = async (interaction) =>{
                     .setDescription("📄 請查看以下資訊") 
                     .addFields({
                       name:`工作名稱 - ${i.values}`,
-                      value: '(暫定)搬磚時間暫定\n搬磚次數預計增加 \n相對休息時間增加 \n```example:搬磚5次 休息10分鐘 搬磚10次 休息20分鐘 ```\n以此類推。'
+                      value: '使用 \`/打工 搬磚\` 進行工作\n使用 \`/打工 搬磚結束\` 在工作到一半的時候結算工資\n總共 `10塊` 磚頭\n每搬一次磚 `休息時間=搬磚數量*2`\n在磚頭剩下 `0` 個時候 使用 `/打工 搬磚` 即可獲得本次工資'
                     })
-                    .setTimestamp()
                     try {
                         const btn = new ActionRowBuilder()
                         .addComponents(
@@ -283,8 +299,8 @@ export const action = async (interaction) =>{
         const cacelJob = new EmbedBuilder()
         .setColor('Red')
         .setTitle('<:warn:1085138987636752414>丨確定要取消工作嗎')
-        .setDescription("如果你取消工作,那麼你將無法拿到本次的工資\n**不管做多久,沒做完都一樣拿不到**\n\`\`\`\請確認是否要取消?`\`\`") 
-        .setTimestamp()  
+        .setDescription("如果你的工資是在工作完成之後才拿到\n**取消工作將會拿不到任何工資!**\n\`\`\`\請確認是否要取消?`\`\`") 
+        .setTimestamp()
 
         const btn = new ActionRowBuilder()
         .addComponents(
@@ -461,12 +477,13 @@ export const action = async (interaction) =>{
         }
       }
 
-    /*捕魚*/
+    /*照護*/
     switch(command) {
       case "照護":
         if(Data.isWorking === false){
           return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你目前沒有工作! <:jobs:1088446692262674492> \n使用 \`/打工 找工作\` 尋找一個工作吧!`, ephemeral: true});
         }
+
         if (!(workla.Work === "外籍看護")) {
           const notThisJob = new EmbedBuilder()
           .setColor('Red')
@@ -475,8 +492,163 @@ export const action = async (interaction) =>{
           .setTimestamp()
           return await interaction.reply({embeds: [notThisJob]})
         } 
-        await interaction.reply({content: `去洗碗啦 瑪麗亞`})
-        
+
+        if (wailao != 0) {
+            const payS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25];
+            let pay = 10 * payS[Math.floor(Math.random() * payS.length)];
+            var wailaoContry = ["菲律賓","印尼","臺灣","日本","張英祈的豪宅",]
+            let location = wailaoContry[Math.floor(Math.random() * wailaoContry.length)]
+            wailao --;
+            Data.Bank += pay;
+            await Data.save()
+            const didJob = new EmbedBuilder()
+            .setTitle('🧕 | 勞動結果')
+            .setColor('Green')
+            .setDescription(`🗺️ 仲介公司派你到 \`${location}\` 服務\n做了 掃地、拖地、煮菜、洗碗、換尿布`)
+            .addFields({name: `<a:coin1:1087317662998208602> 獲得工資: \`${pay}\` 點`, value: ` `})
+            .addFields({name: `<a:arrowla:1092355535766044764> 剩餘體力: \`${wailao} / 3\``, value: ` `})
+            .addFields({name: `<a:arrowla:1092355535766044764> 體力每 \`10分鐘\` 恢復 \`1 點\`體力值`, value: ` `})
+
+            await interaction.reply({embeds: [didJob]})
+        } else {
+          const noEnger = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:Animatederror:1086903258993406003> | 無法進行照護!')
+          .setDescription(`因為你當前沒有體力了!`)
+          .addFields({name: `<a:arrowla:1092355535766044764> 體力:`, value: `\`${wailao} / 3\` 點體力值`})
+          .addFields({name: `<a:arrowla:1092355535766044764> 恢復方法:`, value: `每10分鐘恢復 \`1\` 體力值`})
+
+          await interaction.reply({embeds: [noEnger], ephemeral: true})
+        }
+        if (wailao < 3  && !wailaoRestoreTimer) {
+          wailaoRestoreTimer = setInterval(()=> {
+            if (wailao < 3) {
+              wailao++;
+            } else {
+              clearInterval(wailaoRestoreTimer);
+              wailaoRestoreTimer = null;
+            }
+          }, 60 * 10 * 1000)
+        }   
+    }
+
+    /*搬磚*/
+    switch(command) {
+      case "搬磚":
+        if(Data.isWorking === false){
+          return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你目前沒有工作! <:jobs:1088446692262674492> \n使用 \`/打工 找工作\` 尋找一個工作吧!`, ephemeral: true});
+        }
+        if (!(workla.Work === "工地人")) {
+          const notThisJob = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:Animatederror:1086903258993406003>丨你無法使用!')
+          .setDescription("原因:\n因為你不是 **工地人**\n`/打工` 來尋找一份打工") 
+          .setTimestamp()
+          return await interaction.reply({embeds: [notThisJob]})
+        } 
+
+
+        let totalBanzhaung = DefaultBanzhuang - banzhuang;
+        let restTime = 2; //搬磚 n 次 休息 2n 分鐘
+        // let restTime = totalBanzhaung *2*60; //搬磚 n 次 休息 2n 分鐘
+        let payment = 50 * totalBanzhaung;
+
+
+        if (banzhuangCooldown.has(user)) {
+          let cooldownEnd = banzhuangCooldown.get(user) + restTime * 1000;
+          const secondLeft = Math.floor((cooldownEnd - now) / 1000, 0);
+            if (0 < secondLeft) { 
+                  const min = Math.floor(secondLeft / 60);
+                  const sec = Math.floor(secondLeft % 60);
+                  const embed = new EmbedBuilder()
+                  .setColor('Red')
+                  .setTitle(`<a:Animatederror:1086903258993406003> | 你還在鷹架上休息!`)
+                  .setDescription(`你還需要等\`${min}\`分 \`${sec}\` 秒\n才能再次使用!`)
+
+                  return interaction.reply({embeds: [embed], ephemeral: true})
+            }
+        }
+        banzhuangCooldown.set(user, now);
+        //工作主體    
+        if (banzhuang != 0) {
+          banzhuang--;
+          const banzhuanging = new EmbedBuilder()
+          .setColor('Orange')
+          .setTitle('👷‍♂️ | 搬磚時間!🧱')
+          .setDescription(`<a:sadapple:1090276424537083914> 你勤奮的搬磚...🧱`)
+          .addFields({name: `🧱 磚頭數: \`${banzhuang} 🧱 / ${DefaultBanzhuang} 🧱\``, value: ` `})
+          .addFields({name: `🧱 領工資❓`, value: `1️⃣ 使用 \`/打工 搬磚結束\` 進行結算\n2️⃣ 把磚頭全部搬完`})
+
+          await interaction.reply({embeds: [banzhuanging]})
+        } else {
+          Data.Bank+= payment;
+          await Data.save();
+          const banzhaungEnd = new EmbedBuilder()
+          .setColor('Green')
+          .setTitle('👷‍♂️ | 搬磚完成!!🧱')
+          .setDescription(`<a:sadapple:1090276424537083914> 你勤奮的搬磚...🧱\n並且成功地完成了所有搬磚任務`)
+          .addFields({name: `🧱 你一共搬了: \`${totalBanzhaung}\` 次磚`, value: ` `})
+          .addFields({name: `🧱 這裡是你的工資: \`${payment}\` 點`, value: ` `})
+          
+          await interaction.reply({embeds: [banzhaungEnd]})
+          Data.isWorking = false;
+          await Data.save();
+          workla.Work ="";
+          await workla.save();
+        } 
+
+    }
+
+    /*搬磚結束*/
+    switch(command) {
+      case "搬磚結束":
+        if(Data.isWorking === false){
+          return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你目前沒有工作! <:jobs:1088446692262674492> \n使用 \`/打工 找工作\` 尋找一個工作吧!`, ephemeral: true});
+        }
+        if (!(workla.Work === "工地人")) {
+          const notThisJob = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:Animatederror:1086903258993406003>丨你無法使用!')
+          .setDescription("原因:\n因為你不是 **工地人**\n`/打工` 來尋找一份打工") 
+          .setTimestamp()
+          return await interaction.reply({embeds: [notThisJob]})
+        } 
+        //結算主體
+        let totalBanzhaung = DefaultBanzhuang - banzhuang;
+        let payment = 50 * totalBanzhaung;
+
+        if (banzhuang != 0 && banzhuang != DefaultBanzhuang) {
+          const endBan = new EmbedBuilder()
+          .setColor('Orange')
+          .setTitle('👷‍♂️ | 結算搬磚 🧱')
+          .setDescription(`<a:sadapple:1090276424537083914> 你勤奮的搬磚...🧱\n並且在 **所有磚頭搬完之前** 結算了`)
+          .addFields({name: `🧱 你一共搬了: \`${totalBanzhaung} 次磚\``, value: ` `})
+          .addFields({name: `🧱 獲得的工資: \`${payment} 點\``, value: ` `})
+          .addFields({name: `🧱 當前工作狀態: \`待業中\``, value: ` `})
+
+          Data.Bank += payment;
+          await Data.save();
+          Data.isWorking = false;
+          await Data.save();
+          workla.Work = "";
+          await workla.save();
+          return await interaction.reply({embeds: [endBan]})
+        } else if(banzhuang === DefaultBanzhuang) {
+          const noDidAnything = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:Animatederror:1086903258993406003> | 無法結算搬磚 🧱')
+          .setDescription(`<a:sadapple:1090276424537083914> 因為你根本沒有搬磚`)
+          
+          await interaction.reply({embeds: [noDidAnything], ephemeral: true})
+        } else {
+          const isZero = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:Animatederror:1086903258993406003> | 無法結算搬磚 🧱')
+          .setDescription(`<a:sadapple:1090276424537083914> 錯誤代碼: \`EorIsZero\` \n請將錯誤代碼回報給作者`)
+          .addFields({name: `<:discordbughunter2:1085932298345656340> 解決方法`, value: `再嘗試一次 \`/打工 搬磚\`\n如果還是不行,請回報給作者`})
+          
+          return await interaction.reply({embeds: [isZero]})
+        }
     }
 
   } catch (error) {

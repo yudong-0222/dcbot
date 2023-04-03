@@ -3,9 +3,13 @@ import {useAppStore} from '../../store/app'
 import ecoSchema from '../../Schemas/ecoSchema'
 import { StringSelectMenuBuilder } from '@discordjs/builders'
 import workSchema from '../../Schemas/workSchema'
+import { queuePostFlushCb } from 'vue'
 
 const cooldowns = new Map();
 let isCancel = false;
+let bait = 20; //魚餌
+let baitRestoreTimer = null;
+
 
 export const command = new SlashCommandBuilder()
 .setName('job')
@@ -25,7 +29,16 @@ export const command = new SlashCommandBuilder()
   .setName('開課')
   .setDescription('老師的工作!')
   )
-
+.addSubcommand(cmd=>
+  cmd
+  .setName('捕魚')
+  .setDescription('漁夫的工作!')
+  )
+.addSubcommand(cmd=>
+  cmd
+  .setName('照護')
+  .setDescription('外勞工作! 瑪麗亞!')
+  )
 export const action = async (interaction) =>{
   try {
     const appStore = useAppStore()
@@ -34,6 +47,7 @@ export const action = async (interaction) =>{
     const now = Date.now();
     const cooldownSeconds = 300;
     let timerId;
+
 
     let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
     if(!Data) return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你無法進行打工 <:jobs:1088446692262674492> \n因為你沒有帳戶`, ephemeral: true});
@@ -99,7 +113,7 @@ export const action = async (interaction) =>{
       )
 
     const command = interaction.options.getSubcommand();
-    switch(command) {
+    switch(command) { //找工作
       case '找工作':
           if(Data.isWorking === true) return await interaction.reply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法尋找工作! <:jobs:1088446692262674492> \n因為你已經有工作了\n> 你的工作是: \`${workla.Work}\``, ephemeral: true})
           const selectionRespond = await interaction.reply({embeds: [firstMsg], components: [jobSelect]})
@@ -306,7 +320,6 @@ export const action = async (interaction) =>{
               await workla.save();
               if (timerId) clearTimeout(timerId)
               timerId = null;
-              console.log(`取消工作: ${Data.isWorking}`);
               return await interaction.editReply({embeds: [yesIdo], components: [], ephemeral: true})
             }
             if (i.customId === 'no' && i.member.id === user.id) {
@@ -384,7 +397,88 @@ export const action = async (interaction) =>{
           }, 30 * 60 * 1000)
         }
       }
-    /**/
+
+    /*捕魚*/
+    switch(command) {
+      case "捕魚":
+        if (Data.isWorking=== false) {
+          const noJobs = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:Animatederror:1086903258993406003>丨你無法使用!')
+          .setDescription("原因:\n因為你當前沒有工作\n`/打工` 來尋找一份打工") 
+          .setTimestamp()
+          return await interaction.reply({embeds: [noJobs]});
+        }
+        if (!(workla.Work === "漁夫")) {
+          const notThisJob = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:Animatederror:1086903258993406003>丨你無法使用!')
+          .setDescription("原因:\n因為你不是 **漁夫**\n`/打工` 來尋找一份打工") 
+          .setTimestamp()
+          return await interaction.reply({embeds: [notThisJob]})
+        } 
+        if (bait < 0) {
+          const NoBait = new EmbedBuilder()
+          .setTitle('<a:Animatederror:1086903258993406003> | 你不能再捕魚了')
+          .setDescription(`因為你現在沒有魚餌!`)
+          return await interaction.reply({embeds: [NoBait]});
+        }
+        var resultNum = ["0","1"]
+        let getGoTimes = resultNum[Math.floor(Math.random()* resultNum.length)]
+        var fishList = [1,2,3,4,5]; //魚的數量
+        let fish = fishList[Math.floor(Math.random()* fishList.length)]
+        if (getGoTimes === "0") {
+          bait --;
+          const failMsg = new EmbedBuilder()
+            .setColor('Red')
+            .setTitle(`🎣 | 出海結果`)
+            .setDescription(`你沒有補到任何一條魚`)
+            .addFields({name: `🍥 **剩餘魚餌:**`, value: ` \`${bait}\` 隻`})
+          return await interaction.reply({embeds: [failMsg], components: []});
+        } else {
+          if (fish >= bait && bait != 0) fish = bait;
+          let pay = (fish*50);
+          bait -= fish;
+          Data.Bank += pay;
+          await Data.save();
+          const successMsg = new EmbedBuilder()
+          .setColor('Green')
+          .setTitle(`🎣 | 出海結果`)
+          .setDescription(`你坐在船上好久，終於聽到網子有動靜\n你捕獲了 \`${fish}\` 條魚`)
+          .addFields({name: `<a:purpleCard:1086599525726175292> **總獲利:**`, value: ` \`${pay}\` 點`})
+          .addFields({name: `🍥 **剩餘魚餌:**`, value: ` \`${bait}\` 隻`})
+          await interaction.reply({embeds: [successMsg], components: []});
+        }
+        if (bait < 20  && !baitRestoreTimer) {
+          baitRestoreTimer = setInterval(()=> {
+            if (bait < 20) {
+              bait++;
+            } else {
+              clearInterval(baitRestoreTimer);
+              baitRestoreTimer = null;
+            }
+          }, 30 * 10 * 1000)
+        }
+      }
+
+    /*捕魚*/
+    switch(command) {
+      case "照護":
+        if(Data.isWorking === false){
+          return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你目前沒有工作! <:jobs:1088446692262674492> \n使用 \`/打工 找工作\` 尋找一個工作吧!`, ephemeral: true});
+        }
+        if (!(workla.Work === "外籍看護")) {
+          const notThisJob = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:Animatederror:1086903258993406003>丨你無法使用!')
+          .setDescription("原因:\n因為你不是 **外籍看護**\n`/打工` 來尋找一份打工") 
+          .setTimestamp()
+          return await interaction.reply({embeds: [notThisJob]})
+        } 
+        await interaction.reply({content: `去洗碗啦 瑪麗亞`})
+        
+    }
+
   } catch (error) {
     console.log(`/打工 有錯誤: ${error}`);
     const errorCode = new EmbedBuilder()

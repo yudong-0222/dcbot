@@ -9,7 +9,7 @@ export const action = async (interaction) =>{
   try {
     const appStore = useAppStore()
     const client = appStore.client;
-    const Ver = "`V0.354`";
+    const Ver = "`V0.356`";
     const rank = "`專家II`";
     const author = `<@${interaction.guild.ownerId}>`;
     // const icon = `${client.user.displayAvatarURL()}`

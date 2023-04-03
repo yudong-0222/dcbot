@@ -567,7 +567,7 @@ export const action = async (interaction) =>{
 
 
         let totalBanzhaung = DefaultBanzhuang - banzhuang;
-        let restTime = totalBanzhaung*2; //搬磚 n 次 休息 2n 分鐘
+        let restTime = totalBanzhaung*2*60; //搬磚 n 次 休息 2n 分鐘
         // let restTime = totalBanzhaung *2*60; //搬磚 n 次 休息 2n 分鐘
         let payment = 50 * totalBanzhaung;
 

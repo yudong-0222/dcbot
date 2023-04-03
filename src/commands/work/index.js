@@ -400,7 +400,7 @@ export const action = async (interaction) =>{
           .setDescription("原因:\n因為你不是 **老師**\n`/打工` 來尋找一份打工") 
           .setTimestamp()
 
-          return await interaction.editReply({embeds: [notThisJob]})
+          return await interaction.reply({embeds: [notThisJob]})
         } 
         let pay = Math.round(Math.random() * 33 ) + 120;
         if (pay >= 150) pay = 150;
@@ -414,7 +414,7 @@ export const action = async (interaction) =>{
         const doThingN = Math.floor(Math.random() * doThings.length);
         const lastMessage = new EmbedBuilder()
         .setColor('Green')
-        .setTitle(`👨‍🏫 | 名師開課 <a:green_tick:994529015652163614>`)
+        .setTitle(`👨‍🏫 | 名師開課 <a:checked:1086296113818128414>`)
         .setDescription(`${doThings[[doThingN]]} $${pay}`);
         await interaction.reply({embeds: [lastMessage], components: []});
         if (!isCancel) {

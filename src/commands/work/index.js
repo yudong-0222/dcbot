@@ -82,7 +82,7 @@ export const action = async (interaction) =>{
       const oldAccount = new EmbedBuilder()
       .setColor('Red')
       .setTitle('<a:wrong:1085174299628929034>丨你的帳號仍是舊版!')
-      .setDescription("> 帳戶必須使用最新版本 `v0.354` 的帳戶\n> 聽不懂? 就用 `/帳戶` 重創一支\n<a:pinkcheckmark:1084383521155592212>重創之前,記得先截圖記得自己的餘額\n再進行後續的補償喔!") 
+      .setDescription("> 帳戶必須使用最新版本 `v0.356` 的帳戶\n> 聽不懂? 就用 `/帳戶` 重創一支\n<a:pinkcheckmark:1084383521155592212>重創之前,記得先截圖記得自己的餘額\n再進行後續的補償喔!") 
       .setTimestamp()
       return await interaction.reply({embeds: [oldAccount], components:[],ephemeral: true});
     }
@@ -133,6 +133,16 @@ export const action = async (interaction) =>{
     const command = interaction.options.getSubcommand();
     switch(command) { //找工作
       case '找工作':
+        if(Data.isWorking === null) {
+          const oldAccount = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:wrong:1085174299628929034>丨你的帳號仍是舊版!')
+          .setDescription("> 帳戶必須使用最新版本 `v0.356` 的帳戶\n> 聽不懂? 就用 `/帳戶` 重創一支\n<a:pinkcheckmark:1084383521155592212>重創之前,記得先截圖記得自己的餘額\n再進行後續的補償喔!") 
+          .setTimestamp()
+          return await interaction.reply({embeds: [oldAccount], components:[],ephemeral: true});
+        }
+
+
           if(Data.isWorking === true) return await interaction.reply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法尋找工作! <:jobs:1088446692262674492> \n因為你已經有工作了\n> 你的工作是: \`${workla.Work}\``, ephemeral: true})
           const selectionRespond = await interaction.reply({embeds: [firstMsg], components: [jobSelect]})
           const collector = await selectionRespond.createMessageComponentCollector({ ComponentType: ComponentType.StringSelect, ComponentType: ComponentType.Button})
@@ -292,6 +302,14 @@ export const action = async (interaction) =>{
       /*取消工作*/
     switch(command) {
       case '取消工作':
+        if(Data.isWorking === null) {
+          const oldAccount = new EmbedBuilder()
+          .setColor('Red')
+          .setTitle('<a:wrong:1085174299628929034>丨你的帳號仍是舊版!')
+          .setDescription("> 帳戶必須使用最新版本 `v0.356` 的帳戶\n> 聽不懂? 就用 `/帳戶` 重創一支\n<a:pinkcheckmark:1084383521155592212>重創之前,記得先截圖記得自己的餘額\n再進行後續的補償喔!") 
+          .setTimestamp()
+          return await interaction.reply({embeds: [oldAccount], components:[],ephemeral: true});
+        }
         if(Data.isWorking === false){
           return await interaction.reply({content: `<a:wrong:1085174299628929034>丨你目前沒有工作! <:jobs:1088446692262674492> \n使用 \`/打工 找工作\` 尋找一個工作吧!`, ephemeral: true});
         }

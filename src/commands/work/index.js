@@ -19,7 +19,7 @@ let wailaoRestoreTimer = null;
 
 
 export const command = new SlashCommandBuilder()
-.setName('job')
+.setName('打工')
 .setDescription('經濟系統-打工指令(BETA版)')
 .addSubcommand(cmd=>
   cmd

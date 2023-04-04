@@ -3,7 +3,6 @@ import {useAppStore} from '../../store/app'
 import ecoSchema from '../../Schemas/ecoSchema'
 import { StringSelectMenuBuilder } from '@discordjs/builders'
 import workSchema from '../../Schemas/workSchema'
-import { queuePostFlushCb } from 'vue'
 
 const cooldowns = new Map();
 const banzhuangCooldown = new Map();

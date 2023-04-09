@@ -28,7 +28,7 @@ export const action = async (interaction) =>{
   let Working = await workSchema.findOne({Guild: interaction.guild.id, User: user.id})
   let workname = Working.Work;
 
-  if(!Working || workname === ""){
+  if(!Working || workname === "" || typeof workname === "undefined"){
     workname = "待業中"
   }
   if(!Data) {

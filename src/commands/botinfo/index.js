@@ -26,7 +26,7 @@ export const action = async (interaction) =>{
       .setLabel(`邀請機器人`)
       .setStyle(ButtonStyle.Link)
       .setEmoji(`<:Koshka:1084363834883579964> `)
-      .setURL('https://dsc.gg/koshka-legend)')
+      .setURL('https://dsc.gg/koshka-legend')
     )
 
     const BotEmbed = new EmbedBuilder()

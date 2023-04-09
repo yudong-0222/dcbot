@@ -25,12 +25,15 @@ export const action = async (interaction) =>{
   
   const Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id})
   let  total = 0;
-  let Working = await workSchema.findOne({Guild: interaction.guild.id, User: user.id})
-  let workname = Working.Work;
+  const Working = await workSchema.findOne({Guild: interaction.guild.id, User: user.id})
+  let workname;
 
-  if(!Working || workname === "" || typeof workname === "undefined"){
+  if(!Working || !Working.Work){
     workname = "待業中"
+  } else {
+    workname = Working.Work;
   }
+  
   if(!Data) {
      total = "他沒有帳戶";
   } else {

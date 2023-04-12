@@ -77,10 +77,10 @@ export const action = async (interaction) =>{
       })
       await workla.save();
     }
-    if(typeof Data.isWorking === "undefined") {
+    if(Data.isWorking === null) {
       const oldAccount = new EmbedBuilder()
       .setColor('Red')
-      .setTitle('<a:wrong:1085174299628929034>丨你的帳號仍是舊版!')
+      .setTitle('<a:wrong:1085174299628929034>丨你的帳號仍是舊版!!!!')
       .setDescription("> 帳戶必須使用最新版本 `v0.356` 以上的帳戶\n> 聽不懂? 就用 `/帳戶` 重創一支\n<a:pinkcheckmark:1084383521155592212>重創之前,記得先截圖記得自己的餘額\n再進行後續的補償喔!") 
       .setTimestamp()
       return await interaction.reply({embeds: [oldAccount], components:[],ephemeral: true});
@@ -140,9 +140,7 @@ export const action = async (interaction) =>{
           .setTimestamp()
           return await interaction.reply({embeds: [oldAccount], components:[],ephemeral: true});
         }
-
-
-          if(Data.isWorking === true) return await interaction.reply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法尋找工作! <:jobs:1088446692262674492> \n因為你已經有工作了\n> 你的工作是: \`${workla.Work}\``, ephemeral: true})
+          if(Data.isWorking === true || workla.Work != "") return await interaction.reply({components: [], embeds: [], content: `<a:wrong:1085174299628929034>丨你無法尋找工作! <:jobs:1088446692262674492> \n因為你已經有工作了\n> 你的工作是: \`${workla.Work}\``, ephemeral: true})
           const selectionRespond = await interaction.reply({embeds: [firstMsg], components: [jobSelect]})
           const collector = await selectionRespond.createMessageComponentCollector({ ComponentType: ComponentType.StringSelect, ComponentType: ComponentType.Button})
           collector.on("collect", async (i)=>{
@@ -563,13 +561,10 @@ export const action = async (interaction) =>{
           .setTimestamp()
           return await interaction.reply({embeds: [notThisJob]})
         } 
-
-
         let totalBanzhaung = DefaultBanzhuang - banzhuang;
         let restTime = totalBanzhaung*2*60; //搬磚 n 次 休息 2n 分鐘
         // let restTime = totalBanzhaung *2*60; //搬磚 n 次 休息 2n 分鐘
         let payment = 50 * totalBanzhaung;
-
 
         if (banzhuangCooldown.has(user)) {
           let cooldownEnd = banzhuangCooldown.get(user) + restTime * 1000;

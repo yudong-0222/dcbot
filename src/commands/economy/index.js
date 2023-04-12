@@ -1,6 +1,8 @@
 import {SlashCommandBuilder,EmbedBuilder,ActionRowBuilder,ButtonBuilder,ButtonStyle} from 'discord.js'
 import {useAppStore} from '../../store/app'
 import ecoSchema from '../../Schemas/ecoSchema'
+import workSchema from '../../Schemas/workSchema'
+
 
 export const command = new SlashCommandBuilder()
 .setName('帳戶')
@@ -55,6 +57,7 @@ export const action = async (interaction) =>{
   const collector = await message.createMessageComponentCollector();
   let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
   let total;
+  let workla = await workSchema.findOne({Guild: interaction.guild.id, User: user.id});
 
   collector.on(`collect`, async i =>{
     try {
@@ -95,8 +98,8 @@ export const action = async (interaction) =>{
           total = Data.Bank + Data.Wallet
           if(total < 0) return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此指令，因為您仍然負債。\n把債還完才有權限刪除帳戶!`, ephemeral: true});
         }
-        
-        await Data.deleteOne();
+        await workSchema.deleteMany();
+        await ecoSchema.deleteMany();
         await i.update({embeds: [embed3], components: [] })
       }
     } catch (error) {

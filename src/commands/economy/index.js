@@ -11,13 +11,12 @@ export const command = new SlashCommandBuilder()
 
 export const action = async (interaction) =>{
   try {
+    let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});
+    let total;
+    let workla = await workSchema.findOne({Guild: interaction.guild.id, User: interaction.user.id});  
     const appStore = useAppStore()
-  const client = appStore.client;
-  
-  const {user, guild} = interaction;
-
-
-  const embed = new EmbedBuilder()
+    const client = appStore.client;
+    const embed = new EmbedBuilder()
   .setColor('#333555')
   .setTitle('社會信用點數帳號')
   .setDescription('選項如下，點擊按鈕來確認')
@@ -52,15 +51,9 @@ export const action = async (interaction) =>{
     .setLabel(`刪除帳戶`)
     .setStyle(ButtonStyle.Danger)
   )
-
   const message = await interaction.reply({ embeds: [embed], components: [button]})
   const collector = await message.createMessageComponentCollector();
-  let Data = await ecoSchema.findOne({Guild: interaction.guild.id, User: user.id});
-  let total;
-  let workla = await workSchema.findOne({Guild: interaction.guild.id, User: user.id});
-
   collector.on(`collect`, async i =>{
-    try {
       if (i.customId === 'page1') {
         if(i.user.id != interaction.user.id) {
           return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
@@ -77,7 +70,7 @@ export const action = async (interaction) =>{
         const oneDayMs = 24 * 60 * 60 * 1000
         Data = new ecoSchema({
           Guild: interaction.guild.id,
-          User: user.id,
+          User: interaction.user.id,
           Bank: 0,
           Wallet: 1000,
           lastDaily: new Date(Date.now() - oneDayMs),
@@ -87,31 +80,20 @@ export const action = async (interaction) =>{
         await i.update({embeds: [embed2], components: [] })
       }
       if (i.customId === 'page2') {
-        ;
         if(i.user.id != interaction.user.id) {
           return i.reply({content:`<:X_:1076798408494436403> | 只有 ${interaction.user.tag} 能夠使用這個!`, ephemeral: true})
-        }
-        
+        }      
         if(!Data) {
           return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此操作\n因為你沒有帳戶`, ephemeral: true});
         } else {
           total = Data.Bank + Data.Wallet
-          if(total < 0) return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此指令，因為您仍然負債。\n把債還完才有權限刪除帳戶!`, ephemeral: true});
-        }
-        await workSchema.deleteMany();
-        await ecoSchema.deleteMany();
-        await i.update({embeds: [embed3], components: [] })
+          if(total < 0) {
+            return i.reply({content: `<a:wrong:1085174299628929034>丨你無法執行此指令，因為您仍然負債。\n把債還完才有權限刪除帳戶!`, ephemeral: true});
+          } 
+i        }
+          await Data.deleteOne({ Guild: interaction.guild.id, User: interaction.user.id })
+          await i.update({ embeds: [embed3], components: [] })
       }
-    } catch (error) {
-      console.log(`/帳戶 有錯誤: ${error}`)
-      const errorCode = new EmbedBuilder()
-      .setColor('Red')
-      .setTitle('<a:Animatederror:1086903258993406003>丨不好!出現了錯誤')
-      .setDescription("如果不能排除，請通知給作者!:") 
-      .addFields({name: `錯誤訊息:`, value: "```"+`${error}`+"```"})
-      .setTimestamp()  
-      return await i.reply({embeds: [errorCode]})
-    }
   })
   } catch (error) {
     console.log(`/帳戶 有錯誤: ${error}`);

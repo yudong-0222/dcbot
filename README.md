@@ -4,8 +4,8 @@ KOSHKA-LEGEND is a Discord bot which have the Chinese Traditional commands.
 
 
 > 一個多功能的 中文Discord Bot    
-> 專屬於 LGD戰隊 Discord Community 的多功能中文 Discord bot
-`https://discord.gg/e7KBPZ4qqX    `
+> 專屬於 LGD戰隊 Discord Community 的多功能中文 Discord bot    
+> [Discord Bot Invite Link](https://dsc.gg/koshka-legend/)
 
 ## 版本: VER 0.356 
 

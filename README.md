@@ -7,7 +7,7 @@ KOSHKA-LEGEND is a Discord bot which have the Chinese Traditional commands.
 > 專屬於 LGD戰隊 Discord Community 的多功能中文 Discord bot    
 > [Discord Bot Invite Link](https://dsc.gg/koshka-legend/)
 
-## Ver 0.356 
+## Ver 0.356
 
 ## How To Use [For Normal User]
 This Discord bot support the Discord's slash command.    

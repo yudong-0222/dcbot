@@ -50,12 +50,12 @@ export const action = async (interaction) => {
         "你成功地奪走了他的財物，真是個狠心的小偷！奪得",
         "偷東西可不是好習慣，但你的技巧確實不錯，得到",
         "偷東西是要付出代價的，但你似乎輕鬆地奪走了他的",
-        "恭喜！你成功地搶劫了，現在你可以好好享受這些點數 +",
+        "恭喜！你成功地搶劫了，現在你可以好好享受這些點數：",
         "好樣的！，搶劫真是太有趣了，你偷走了",
         "太厲害了！現在可以去買點東西慶祝了!你成功地搶到了",
         "!你成功地搶到了",
         "太厲害了！學校教你怎麼搶劫的嗎 搶到了",
-        "搶到了",
+        "神偷之手，你搶到了",
         "太厲害了！現在可以去買點東西慶祝了!你成功地搶到了",
       ]
       const posName = Math.floor(Math.random() * positiveChoices.length);
@@ -83,7 +83,7 @@ export const action = async (interaction) => {
       const beblostEmbed = new EmbedBuilder()
         .setColor('Red')
         .setTitle('<a:wrong:1085174299628929034> 搶劫失敗! <a:bunbun:991105824170713088> ')
-        .addFields({name: `${user.tag} **搶劫了** ${userStealing.tag}`,value: `> 但你失敗了...`});
+        .addFields({name: `${user} **搶劫了** ${userStealing}`,value: `> 但你失敗了...`});
       try {
         interaction.reply({embeds: [beblostEmbed]})
       } catch (error) {

@@ -20,7 +20,7 @@ export const action = async (interaction) =>{
   const appStore = useAppStore()
   const client = appStore.client;
   
-  if(interaction.guild.id === process.env.GUILDID) {
+  if(interaction.guild.id === process.env.GUILDID || interaction.guild.id === process.env.GUILDID2) {
     interaction.deferReply();
     interaction.deleteReply();
     interaction.channel.send({content: interaction.options.getString('訊息')})

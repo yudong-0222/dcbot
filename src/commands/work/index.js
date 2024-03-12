@@ -81,7 +81,7 @@ export const action = async (interaction) =>{
       const oldAccount = new EmbedBuilder()
       .setColor('Red')
       .setTitle('<a:wrong:1085174299628929034>丨你的帳號仍是舊版!!!!')
-      .setDescription("> 帳戶必須使用最新版本 `v0.356` 以上的帳戶\n> 聽不懂? 就用 `/帳戶` 重創一支\n<a:pinkcheckmark:1084383521155592212>重創之前,記得先截圖記得自己的餘額\n再進行後續的補償喔!") 
+      .setDescription("> 帳戶必須使用版本 `v0.356` 以上的帳戶\n> 聽不懂? 就用 `/帳戶` 重創一支\n<a:pinkcheckmark:1084383521155592212>重創之前,記得先截圖記得自己的餘額\n再進行後續的補償喔!") 
       .setTimestamp()
       return await interaction.reply({embeds: [oldAccount], components:[],ephemeral: true});
     }

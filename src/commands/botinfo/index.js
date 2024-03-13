@@ -9,15 +9,14 @@ export const action = async (interaction) =>{
   try {
     const appStore = useAppStore()
     const client = appStore.client;
-    const Ver = "`V0.356`";
+    const Ver = "`Ver.0.36`";
     const rank = "`專家II`";
-    const author = `<@${interaction.guild.ownerId}>`;
     // const icon = `${client.user.displayAvatarURL()}`
 
     const row = new ActionRowBuilder() 
     .addComponents(
       new ButtonBuilder()
-      .setLabel(`LGD戰隊伺服器`)
+      .setLabel(`LGD 決勝時刻戰隊伺服器`)
       .setStyle(ButtonStyle.Link)
       .setEmoji(`<a:Newbadge:1084372472159285258> `)
       .setURL('https://discord.gg/e7KBPZ4qqX'),
@@ -33,11 +32,10 @@ export const action = async (interaction) =>{
     .setColor('Random')
     .setTitle(`<:Koshka:1084363834883579964> ${client.user.username} 的資訊`)
     // .setThumbnail(`${icon}`)
-    .addFields({ name: '機器人作者', value: author , inline: true})
     .addFields({ name: '機器人版本', value: Ver , inline: true})
     .addFields({ name: '機器人段位', value: rank , inline: true})
     .setTimestamp()
-    .setFooter({ text: '@2023 KOSHKA-LENGEND', iconURL: 'https://i.imgur.com/clEn73Q.gif'});
+    .setFooter({ text: '@2023-2024 KOSHKA-LENGEND', iconURL: 'https://i.imgur.com/clEn73Q.gif'});
       
     interaction.reply({ embeds: [BotEmbed], components: [row]});
 
